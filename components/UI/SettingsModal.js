@@ -73,44 +73,25 @@ export default function FourFrogsSettingsModal({
                             <div>
                                 {[
                                     {
-                                        action: 'Move Up',
+                                        action: 'Forward',
                                         defaultKeyboardKey: 'W'
                                     },
                                     {
-                                        action: 'Move Down',
+                                        action: 'Backward',
                                         defaultKeyboardKey: 'S'
                                     },
                                     {
-                                        action: 'Move Left',
+                                        action: 'Left',
                                         defaultKeyboardKey: 'A'
                                     },
                                     {
-                                        action: 'Move Right',
+                                        action: 'Right',
                                         defaultKeyboardKey: 'D'
                                     },
                                     {
-                                        action: 'Drop Insect',
+                                        action: 'Jump',
                                         defaultKeyboardKey: 'Space'
                                     },
-                                    {
-                                        action: 'Stop Powerup',
-                                        defaultKeyboardKey: 'ArrowDown'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Stick out Tongue',
-                                        defaultKeyboardKey: 'ArrowDown'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Rotate Left',
-                                        defaultKeyboardKey: 'ArrowLeft'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Rotate Right',
-                                        defaultKeyboardKey: 'ArrowRight'
-                                    }
                                 ].map(obj =>
                                     <div key={obj.action}>
                                         <div className="flex-header border-bottom pb-1 mb-1">

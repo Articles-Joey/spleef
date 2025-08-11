@@ -192,7 +192,7 @@ export default function GameLobbyPage() {
                     <div className="card-body">
 
                         <div className="fw-bold mb-1 small text-center">
-                            Your user high score: {userHighScore?.score}
+                            Your user high score: {userHighScore?.score || 0}
                         </div>
 
                         <Link
@@ -203,120 +203,79 @@ export default function GameLobbyPage() {
                                 // }
                             }}
                         >
-                            <ArticlesButton className="w-100 mb-3">
+                            <ArticlesButton className="w-100">
                                 Play Single Player
                             </ArticlesButton>
                         </Link>
 
-                        <div className="fw-bold mb-1 small text-center">
-                            {lobbyDetails.players.length || 0} player{lobbyDetails.players.length > 1 && 's'} in the lobby.
-                        </div>
-
-                        {/* <div className='small fw-bold'>Public Servers</div> */}
-
-                        <div className="servers">
-
-                            {[1, 2, 3, 4].map(id => {
-
-                                let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
-                                    parseInt(lobby.server_id) == id
-                                )
-
-                                return (
-                                    <div key={id} className="server">
-
-                                        <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
-                                            <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
-                                            <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
-                                        </div>
-
-                                        <div className='d-flex justify-content-around w-100 mb-1'>
-                                            {[1, 2, 3, 4].map(player_count => {
-
-                                                let playerLookup = false
-
-                                                if (lobbyLookup?.players?.length >= player_count) playerLookup = true
-
-                                                return (
-                                                    <div key={player_count} className="icon" style={{
-                                                        width: '20px',
-                                                        height: '20px',
-                                                        ...(playerLookup ? {
-                                                            backgroundColor: 'black',
-                                                        } : {
-                                                            backgroundColor: 'gray',
-                                                        }),
-                                                        border: '1px solid black'
-                                                    }}>
-
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-
-                                        <Link
-                                            className={``}
-                                            href={{
-                                                pathname: `/play`,
-                                                query: {
-                                                    server: id
-                                                }
-                                            }}
-                                        >
-                                            <ArticlesButton
-                                                className="px-5"
-                                                small
-                                            >
-                                                Join
-                                            </ArticlesButton>
-                                        </Link>
-
-                                    </div>
-                                )
-                            })}
-
-                        </div>
-
-                        {/* <div className='small fw-bold  mt-3 mb-1'>Or</div> */}
-
-                        {/* <div className='d-flex'>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                onClick={() => {
-                                    // TODO
-                                    alert("Coming Soon!")
-                                }}
-                            >
-                                <i className="fad fa-robot"></i>
-                                Practice
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                onClick={() => {
-                                    setShowPrivateGameModal(prev => !prev)
-                                }}
-                            >
-                                <i className="fad fa-lock"></i>
-                                Private Game
-                            </ArticlesButton>
-
-                        </div> */}
-
-                        {/* <IsDev className={'mt-3'}>
-                            <div>
-                                <ArticlesButton
-                                    className="w-50"
-                                    variant='warning'
-                                    onClick={() => {
-                                        socket.emit('game:four-frogs:reset', '');
-                                    }}
-                                >
-                                    Reset Server
-                                </ArticlesButton>
+                        <div className='d-none'>
+                            <div className="fw-bold mb-1 small text-center">
+                                {lobbyDetails.players.length || 0} player{lobbyDetails.players.length > 1 && 's'} in the lobby.
                             </div>
-                        </IsDev> */}
+    
+                            <div className="servers">
+    
+                                {[1, 2, 3, 4].map(id => {
+    
+                                    let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
+                                        parseInt(lobby.server_id) == id
+                                    )
+    
+                                    return (
+                                        <div key={id} className="server">
+    
+                                            <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
+                                                <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
+                                                <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
+                                            </div>
+    
+                                            <div className='d-flex justify-content-around w-100 mb-1'>
+                                                {[1, 2, 3, 4].map(player_count => {
+    
+                                                    let playerLookup = false
+    
+                                                    if (lobbyLookup?.players?.length >= player_count) playerLookup = true
+    
+                                                    return (
+                                                        <div key={player_count} className="icon" style={{
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            ...(playerLookup ? {
+                                                                backgroundColor: 'black',
+                                                            } : {
+                                                                backgroundColor: 'gray',
+                                                            }),
+                                                            border: '1px solid black'
+                                                        }}>
+    
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+    
+                                            <Link
+                                                className={``}
+                                                href={{
+                                                    pathname: `/play`,
+                                                    query: {
+                                                        server: id
+                                                    }
+                                                }}
+                                            >
+                                                <ArticlesButton
+                                                    className="px-5"
+                                                    small
+                                                >
+                                                    Join
+                                                </ArticlesButton>
+                                            </Link>
+    
+                                        </div>
+                                    )
+                                })}
+    
+                            </div>
+                        </div>
 
                     </div>
 
@@ -346,7 +305,7 @@ export default function GameLobbyPage() {
                             Rules & Controls
                         </ArticlesButton>
 
-                        <Link href={'/'} className='w-50'>
+                        <Link href={'https://github.com/Articles-Joey/spleef'} className='w-50' target='_blank' rel='noreferrer'>
                             <ArticlesButton
                                 className={`w-100`}
                                 small
@@ -354,8 +313,8 @@ export default function GameLobbyPage() {
 
                                 }}
                             >
-                                <i className="fad fa-sign-out fa-rotate-180"></i>
-                                Leave Game
+                                <i className="fab fa-github"></i>
+                                GitHub
                             </ArticlesButton>
                         </Link>
 
