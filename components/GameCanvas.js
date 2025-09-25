@@ -41,22 +41,17 @@ function GameCanvas(props) {
 
     // const GPUTier = useDetectGPU()
 
-    const {
-        handleCameraChange,
-        gameState,
-        players,
-        move,
-        cameraInfo,
-        server
-    } = props;
+    // const {
+    //     handleCameraChange,
+    //     gameState,
+    //     players,
+    //     move,
+    //     cameraInfo,
+    //     server
+    // } = props;
 
-    const {
-        debug,
-        controlType,
-    } = useSpleefGameStore(state => ({
-        debug: state.debug,
-        controlType: state.controlType
-    }));
+    const debug = useSpleefGameStore(state => state.debug);
+    const controlType = useSpleefGameStore(state => state.controlType);
 
     let gameContent = (
         <>

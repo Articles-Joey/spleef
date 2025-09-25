@@ -20,27 +20,15 @@ function PlayerBase() {
 
     const { camera } = useThree()
 
-    const {
-        setPlayer,
-        setPosition,
-        position,
-        alive,
-        setAlive,
-        incrementSurvivalTimer,
-        setBestSurvivalTimer,
-        bestSurvivalTimer,
-        survivalTimer
-    } = useSpleefGameStore(state => ({
-        setPlayer: state.setPlayer,
-        setPosition: state.setPosition,
-        position: state.position,
-        alive: state.alive,
-        setAlive: state.setAlive,
-        incrementSurvivalTimer: state.incrementSurvivalTimer,
-        setBestSurvivalTimer: state.setBestSurvivalTimer,
-        bestSurvivalTimer: state.bestSurvivalTimer,
-        survivalTimer: state.survivalTimer
-    }));
+    const setPlayer = useSpleefGameStore(state => state.setPlayer);
+    const setPosition = useSpleefGameStore(state => state.setPosition);
+    const position = useSpleefGameStore(state => state.position);
+    const alive = useSpleefGameStore(state => state.alive);
+    const setAlive = useSpleefGameStore(state => state.setAlive);
+    const incrementSurvivalTimer = useSpleefGameStore(state => state.incrementSurvivalTimer);
+    const setBestSurvivalTimer = useSpleefGameStore(state => state.setBestSurvivalTimer);
+    const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
+    // const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
 
     const [ref, api] = useSphere(() => ({
         mass: 1,

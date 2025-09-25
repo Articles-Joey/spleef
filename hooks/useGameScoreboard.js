@@ -18,7 +18,8 @@ const useGameScoreboard = (params) => {
     const { data, error, isLoading, isValidating, mutate } = useSWR(
         params?.game ?
             {
-                url: "/api/community/games/scoreboard",
+                url: "https://articles.media/api/community/games/scoreboard",
+                // url: "http://localhost:3001/api/community/games/scoreboard",
                 game: params.game,
             }
             :

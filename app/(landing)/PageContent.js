@@ -164,6 +164,21 @@ export default function GameLobbyPage() {
 
                     <div className='card-header d-flex align-items-center'>
 
+                        <div
+                            style={{
+                                marginRight: '10px',
+                            }}
+                        >
+                            <Image
+                                src={`/img/spleef-thumbnail-sm.jpg`}
+                                width={75}
+                                height={75}
+                                alt=""
+                            >
+
+                            </Image>
+                        </div>
+
                         <div className="flex-grow-1">
 
                             <div className="form-group articles mb-0">
@@ -187,6 +202,7 @@ export default function GameLobbyPage() {
                             <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
 
                         </div>
+
                     </div>
 
                     <div className="card-body">
@@ -212,30 +228,30 @@ export default function GameLobbyPage() {
                             <div className="fw-bold mb-1 small text-center">
                                 {lobbyDetails.players.length || 0} player{lobbyDetails.players.length > 1 && 's'} in the lobby.
                             </div>
-    
+
                             <div className="servers">
-    
+
                                 {[1, 2, 3, 4].map(id => {
-    
+
                                     let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
                                         parseInt(lobby.server_id) == id
                                     )
-    
+
                                     return (
                                         <div key={id} className="server">
-    
+
                                             <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
                                                 <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
                                                 <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
                                             </div>
-    
+
                                             <div className='d-flex justify-content-around w-100 mb-1'>
                                                 {[1, 2, 3, 4].map(player_count => {
-    
+
                                                     let playerLookup = false
-    
+
                                                     if (lobbyLookup?.players?.length >= player_count) playerLookup = true
-    
+
                                                     return (
                                                         <div key={player_count} className="icon" style={{
                                                             width: '20px',
@@ -247,12 +263,12 @@ export default function GameLobbyPage() {
                                                             }),
                                                             border: '1px solid black'
                                                         }}>
-    
+
                                                         </div>
                                                     )
                                                 })}
                                             </div>
-    
+
                                             <Link
                                                 className={``}
                                                 href={{
@@ -269,11 +285,11 @@ export default function GameLobbyPage() {
                                                     Join
                                                 </ArticlesButton>
                                             </Link>
-    
+
                                         </div>
                                     )
                                 })}
-    
+
                             </div>
                         </div>
 

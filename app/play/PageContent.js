@@ -8,6 +8,7 @@ import useFullscreen from "@/hooks/useFullScreen";
 import { useSearchParams } from "next/navigation";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import { useSocketStore } from "@/hooks/useSocketStore";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export default function GamePage() {
 
@@ -21,15 +22,16 @@ export default function GamePage() {
 
     const [sceneKey, setSceneKey] = useState(0);
 
+    // const [reloadableKey, setReloadableKey] = useState(0)
+
+    useHotkeys('r', () => {
+        setSceneKey((prev) => prev + 1)
+    })
+
     const [gameState, setGameState] = useState(false)
 
-    const {
-        setSurvivalTimer,
-        setAlive,
-    } = useSpleefGameStore(state => ({
-        setSurvivalTimer: state.setSurvivalTimer,
-        setAlive: state.setAlive
-    }));
+    const setSurvivalTimer = useSpleefGameStore(state => state.setSurvivalTimer);
+    const setAlive = useSpleefGameStore(state => state.setAlive);
 
     // Function to handle scene reload
     const reloadScene = () => {

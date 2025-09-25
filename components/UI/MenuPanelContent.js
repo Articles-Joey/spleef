@@ -33,19 +33,11 @@ export default function MenuPanelContent(props) {
         socket: state.socket,
     }));
 
-    const {
-        debug,
-        setDebug,
-        survivalTimer,
-        alive,
-        bestSurvivalTimer,
-    } = useSpleefGameStore(state => ({
-        debug: state.debug,
-        setDebug: state.setDebug,
-        survivalTimer: state.survivalTimer,
-        alive: state.alive,
-        bestSurvivalTimer: state.bestSurvivalTimer
-    }));
+    const debug = useSpleefGameStore(state => state.debug);
+    const setDebug = useSpleefGameStore(state => state.setDebug);
+    const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
+    const alive = useSpleefGameStore(state => state.alive);
+    const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
 
     return (
         <div className='w-100'>
@@ -103,7 +95,7 @@ export default function MenuPanelContent(props) {
                             if (isFullscreen) {
                                 exitFullscreen()
                             } else {
-                                requestFullscreen('amcot-pool-game-page')
+                                requestFullscreen('spleef-game-page')
                             }
                         }}
                     >
