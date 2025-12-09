@@ -25,7 +25,7 @@ export default function GamePage() {
     // const [reloadableKey, setReloadableKey] = useState(0)
 
     useHotkeys('r', () => {
-        setSceneKey((prev) => prev + 1)
+        reloadScene()
     })
 
     const [gameState, setGameState] = useState(false)

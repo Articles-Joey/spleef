@@ -1,12 +1,14 @@
 import { useFrame, useThree } from "@react-three/fiber"
 import { useSphere } from "@react-three/cannon"
-import { memo, useEffect, useRef } from "react"
+import { memo, useEffect, useMemo, useRef } from "react"
 import { Vector3 } from "three"
 import { useKeyboard } from "@/hooks/useKeyboard"
 
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore"
 // import { useSelector } from "react-redux"
 import axios from "axios"
+import ModelBazooka from "./Models/Bazooka"
+import { degToRad } from "three/src/math/MathUtils"
 
 const JUMP_FORCE = 4;
 const SPEED = 4;
@@ -19,6 +21,12 @@ function PlayerBase() {
     const { moveBackward, moveForward, moveRight, moveLeft, jump, shift, crouch } = useKeyboard()
 
     const { camera } = useThree()
+    
+    const hudGroupRef = useRef()
+    const weaponRef = useRef()
+    const hudOffset = useMemo(() => new Vector3(0.6, -0.45, -1.2), [])
+    const hudOffsetApplied = useMemo(() => new Vector3(), [])
+    const hudWorldPosition = useMemo(() => new Vector3(), [])
 
     const setPlayer = useSpleefGameStore(state => state.setPlayer);
     const setPosition = useSpleefGameStore(state => state.setPosition);
@@ -28,7 +36,32 @@ function PlayerBase() {
     const incrementSurvivalTimer = useSpleefGameStore(state => state.incrementSurvivalTimer);
     const setBestSurvivalTimer = useSpleefGameStore(state => state.setBestSurvivalTimer);
     const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
+    const addBullet = useSpleefGameStore(state => state.addBullet);
     // const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
+
+    useEffect(() => {
+        const handleMouseDown = () => {
+            if (!alive) return
+
+            const direction = new Vector3()
+            camera.getWorldDirection(direction)
+            
+            const spawnPos = new Vector3()
+            camera.getWorldPosition(spawnPos)
+            spawnPos.add(direction.clone().multiplyScalar(2)) // Spawn slightly in front
+
+            const velocity = direction.multiplyScalar(30) // Speed 30
+
+            addBullet({
+                id: Date.now() + Math.random(),
+                position: [spawnPos.x, spawnPos.y, spawnPos.z],
+                velocity: [velocity.x, velocity.y, velocity.z]
+            })
+        }
+
+        document.addEventListener('mousedown', handleMouseDown)
+        return () => document.removeEventListener('mousedown', handleMouseDown)
+    }, [alive, addBullet, camera])
 
     const [ref, api] = useSphere(() => ({
         mass: 1,
@@ -165,10 +198,44 @@ function PlayerBase() {
             api.velocity.set(vel.current[0], JUMP_FORCE, vel.current[2])
         }
 
+        const hud = hudGroupRef.current
+        if (hud) {
+            hudOffsetApplied
+                .copy(hudOffset)
+                .applyQuaternion(camera.quaternion)
+
+            hudWorldPosition
+                .copy(camera.position)
+                .add(hudOffsetApplied)
+
+            hud.position.copy(hudWorldPosition)
+            hud.quaternion.copy(camera.quaternion)
+        }
+
     })
 
     return (
-        <mesh ref={ref}></mesh>
+        <>
+            <mesh ref={ref}></mesh>
+
+            {/* HUD placeholder: replace the cube with the final model to render it in the player's view */}
+            <group ref={hudGroupRef} scale={0.25}>
+
+                <group ref={weaponRef}>
+                    <ModelBazooka 
+                        scale={3}
+                        rotation={[0, 0, degToRad(-90)]}
+                        hud
+                    />
+                </group>
+
+                {/* <mesh>
+                    <boxGeometry args={[3, 3, 3]} />
+                    <meshStandardMaterial color="#00ffcc" metalness={0.2} roughness={0.7} />
+                </mesh> */}
+
+            </group>
+        </>
     )
 }
 

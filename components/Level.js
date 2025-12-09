@@ -102,7 +102,7 @@ function Tile({ position, position_id, level_id }) {
     // if (removed) return
 
     return (
-        <mesh ref={ref} castShadow>
+        <mesh ref={ref} castShadow userData={{ isTile: true, position_id, level_id }}>
 
             {!removed &&
                 <>

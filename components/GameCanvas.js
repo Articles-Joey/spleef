@@ -14,6 +14,7 @@ import Ground from "./Ground";
 import { memo } from "react";
 import Level from "./Level";
 import MyComponentSkyBox from "./SkyBox";
+import Bullet from "./Bullet";
 
 // const texture = new TextureLoader().load(`${process.env.NEXT_PUBLIC_CDN}games/Race Game/grass.jpg`)
 
@@ -52,6 +53,7 @@ function GameCanvas(props) {
 
     const debug = useSpleefGameStore(state => state.debug);
     const controlType = useSpleefGameStore(state => state.controlType);
+    const bullets = useSpleefGameStore(state => state.bullets);
 
     let gameContent = (
         <>
@@ -63,6 +65,10 @@ function GameCanvas(props) {
             {controlType == "Mouse and Keyboard" &&
                 <Player />
             }
+
+            {bullets.map((bullet) => (
+                <Bullet key={bullet.id} {...bullet} />
+            ))}
 
             {[...Array(5)].map((obj, level_i) => {
 

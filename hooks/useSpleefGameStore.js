@@ -58,4 +58,8 @@ export const useSpleefGameStore = create((set) => ({
 
     tagCounter: 0,
     setTagCounter: (tagCounter) => set({ tagCounter }),
+
+    bullets: [],
+    addBullet: (bullet) => set((state) => ({ bullets: [...state.bullets, bullet] })),
+    removeBullet: (id) => set((state) => ({ bullets: state.bullets.filter((b) => b.id !== id) })),
 }))

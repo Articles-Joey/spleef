@@ -1,6 +1,6 @@
 # Spleef
 
-![Game Image](public/img/game-preview.webp)
+![Preview](public/img/game-preview.webp)
 
 Stay in the game longer then all the other players. Each platform disappears shortly after you land on it. Jump platform to platform to avoid falling down the different levels, if you fall all the way through you will be eliminated.
 
