@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": false,
   "homepage": "https://spleef.articles.media",
+  "github": "https://github.com/Articles-Joey/spleef",
   "scripts": {
     "dev": "next dev --webpack -p 3021",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9",
     "eslint-config-next": "^16"
   }
