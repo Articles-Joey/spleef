@@ -7,7 +7,7 @@ import { useKeyboard } from "@/hooks/useKeyboard"
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore"
 // import { useSelector } from "react-redux"
 import axios from "axios"
-import ModelBazooka from "./Models/Bazooka"
+import ModelBazooka from "../Models/Bazooka"
 import { degToRad } from "three/src/math/MathUtils"
 
 const JUMP_FORCE = 4;

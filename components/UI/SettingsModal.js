@@ -73,24 +73,45 @@ export default function FourFrogsSettingsModal({
                             <div>
                                 {[
                                     {
-                                        action: 'Forward',
-                                        defaultKeyboardKey: 'W'
+                                        action: 'Move Up',
+                                        defaultKeyboardKey: 'W',
+                                        defaultControllerKey: 'Left Stick Up',
                                     },
                                     {
-                                        action: 'Backward',
-                                        defaultKeyboardKey: 'S'
+                                        action: 'Move Down',
+                                        defaultKeyboardKey: 'S',
+                                        defaultControllerKey: 'Left Stick Down',
                                     },
                                     {
-                                        action: 'Left',
-                                        defaultKeyboardKey: 'A'
+                                        action: 'Move Left',
+                                        defaultKeyboardKey: 'A',
+                                        defaultControllerKey: 'Left Stick Left',
                                     },
                                     {
-                                        action: 'Right',
-                                        defaultKeyboardKey: 'D'
+                                        action: 'Move Right',
+                                        defaultKeyboardKey: 'D',
+                                        defaultControllerKey: 'Left Stick Right',
+                                    },
+                                    {
+                                        action: 'Look Around',
+                                        defaultKeyboardKey: 'Mouse Move',
+                                        defaultControllerKey: 'Right Stick',
+                                        disableChange: true,
+                                    },
+                                    {
+                                        action: 'Sprint',
+                                        defaultKeyboardKey: 'Shift',
+                                        defaultControllerKey: 'RT',
                                     },
                                     {
                                         action: 'Jump',
-                                        defaultKeyboardKey: 'Space'
+                                        defaultKeyboardKey: 'Space',
+                                        defaultControllerKey: 'A',
+                                    },
+                                    {
+                                        action: 'Camera Control Toggle',
+                                        defaultKeyboardKey: 'V',
+                                        defaultControllerKey: 'Y',
                                     },
                                 ].map(obj =>
                                     <div key={obj.action}>
@@ -105,7 +126,7 @@ export default function FourFrogsSettingsModal({
 
                                                 <div className="badge badge-hover bg-articles me-1">{obj.defaultKeyboardKey}</div>
 
-                                                <ArticlesButton 
+                                                <ArticlesButton
                                                     className=""
                                                     small
                                                 >
@@ -118,33 +139,15 @@ export default function FourFrogsSettingsModal({
                                 )}
                             </div>
                         }
+
                         {tab == 'Audio' &&
-                            <>
-                                <Form.Label className="mb-0">Game Volume</Form.Label>
-                                <Form.Range />
-                                <Form.Label className="mb-0">Music Volume</Form.Label>
-                                <Form.Range />
-                            </>
+                            <AudioTab />
                         }
+
                         {tab == 'Chat' &&
-                            <>
-                                <Form.Check
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Game chat panel"
-                                />
-                                <Form.Check
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Censor chat"
-                                />
-                                <Form.Check
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Game chat speech bubbles"
-                                />
-                            </>
+                            <ChatTab />
                         }
+
                     </div>
 
                 </Modal.Body>
@@ -152,7 +155,6 @@ export default function FourFrogsSettingsModal({
                 <Modal.Footer className="justify-content-between">
 
                     {/* <div></div> */}
-
 
                     <div>
 
@@ -187,4 +189,79 @@ export default function FourFrogsSettingsModal({
         </>
     )
 
+}
+
+function AudioTab() {
+
+    const audioSettings = useSpleefGameStore((state) => state.audioSettings)
+    const setAudioSettings = useSpleefGameStore((state) => state.setAudioSettings)
+
+    return (
+        <>
+
+            <div className="mb-3">
+                <ArticlesButton
+                    active={!audioSettings?.enabled}
+                    onClick={() => {
+                        setAudioSettings({
+                            ...audioSettings,
+                            enabled: false,
+                        })
+                    }}
+                >
+                    Off
+                </ArticlesButton>
+                <ArticlesButton
+                    active={audioSettings?.enabled}
+                    onClick={() => {
+                        setAudioSettings({
+                            ...audioSettings,
+                            enabled: true,
+                        })
+                    }}
+                >
+                    On
+                </ArticlesButton>
+            </div>
+
+            <Form.Label className="mb-0">Game Volume - {audioSettings?.soundEffectsVolume}</Form.Label>
+            <Form.Range
+                value={audioSettings?.soundEffectsVolume}
+                onChange={(e) => setAudioSettings({
+                    ...audioSettings,
+                    soundEffectsVolume: Number(e.target.value),
+                })}
+            />
+            <Form.Label className="mb-0">Music Volume - {audioSettings?.backgroundMusicVolume}</Form.Label>
+            <Form.Range
+                value={audioSettings?.backgroundMusicVolume}
+                onChange={(e) => setAudioSettings({
+                    ...audioSettings,
+                    backgroundMusicVolume: Number(e.target.value),
+                })}
+            />
+        </>
+    )
+}
+
+function ChatTab() {
+    return (
+        <>
+            <Form.Check
+                type="switch"
+                id="custom-switch"
+                label="Game chat panel"
+            />
+            <Form.Check
+                type="switch"
+                id="custom-switch"
+                label="Censor chat"
+            />
+            <Form.Check
+                type="switch"
+                id="custom-switch"
+                label="Game chat speech bubbles"
+            />
+        </>
+    )
 }

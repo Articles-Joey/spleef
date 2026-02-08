@@ -8,7 +8,18 @@ import theme from '@/theme';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import "@/styles/index.scss";
-import SocketLogicHandler from "@/components/SocketLogicHandler";
+
+import "@articles-media/articles-dev-box/dist/style.css";
+
+import "@articles-media/articles-gamepad-helper/dist/articles-gamepad-helper.css";
+
+import LayoutClient from './layout-client';
+import DarkModeHandler from '@/components/UI/DarkModeHandler';
+import GlobalClientModals from '@/components/UI/GlobalClientModals';
+import { Suspense } from 'react';
+import PeerManager from '@/components/PeerManager';
+
+// import SocketLogicHandler from "@/components/SocketLogicHandler";
 
 export const metadata = {
   title: "Spleef",
@@ -20,7 +31,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
 
       <head>
-        
+
         <link
           rel="stylesheet"
           href={`${process.env.NEXT_PUBLIC_CDN}fonts/fontawsome/css/all.min.css`}
@@ -32,7 +43,13 @@ export default function RootLayout({ children }) {
       // className={`${geistSans.variable} ${geistMono.variable}`}
       >
 
-        <SocketLogicHandler />
+        <Suspense>
+          {/* <SocketLogicHandler /> */}
+          <LayoutClient />
+          <DarkModeHandler />
+          <GlobalClientModals />
+          <PeerManager />
+        </Suspense>
 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
@@ -41,6 +58,7 @@ export default function RootLayout({ children }) {
             {children}
           </ThemeProvider>
         </AppRouterCacheProvider>
+
       </body>
     </html>
   );

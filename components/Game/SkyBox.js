@@ -1,10 +1,10 @@
-import defaultSkyboxes from "@/components/defaultSkyboxes";
+import defaultSkyboxes from "@/components/Game/defaultSkyboxes";
 import { useThree } from "@react-three/fiber";
 import { memo, useEffect, useRef } from "react";
 import { CubeTextureLoader } from "three";
 // import { useStore } from "../../../hooks/useStore";
 
-const MyComponentSkyBox = memo(() => {
+const MyComponentSkyBox = memo(({ name }) => {
 
     const { scene } = useThree();
 
@@ -23,7 +23,7 @@ const MyComponentSkyBox = memo(() => {
 
     useEffect(() => {
 
-        let defaultSkyboxLookup = defaultSkyboxes.find(obj => obj.name == "Cartoon Base BlueSky")
+        let defaultSkyboxLookup = defaultSkyboxes.find(obj => obj.name == (name || "Cartoon Base BlueSky"))
 
         if (defaultSkyboxLookup && previousBackground.current !==  "Cartoon Base BlueSky") {
 
@@ -70,7 +70,7 @@ const MyComponentSkyBox = memo(() => {
             scene.background = null;
         };
 
-    }, [loader, scene]);
+    }, [loader, scene, name]);
 
     // return null;
 

@@ -109,6 +109,7 @@ function Tile({ position, position_id, level_id }) {
                     <cylinderGeometry args={args} />
                     {/* <BeachBall /> */}
                     <meshStandardMaterial
+                        frustumCulled={false}
                         color={getRandomHexColor()}
                         transparent={true}
                         opacity={touched ? 0.5 : 1}

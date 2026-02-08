@@ -1,7 +1,7 @@
 "use client"
 import ArticlesButton from "@/components/UI/Button";
 import MenuPanelContent from "@/components/UI/MenuPanelContent";
-import GameCanvas from "@/components/GameCanvas";
+import GameCanvas from "@/components/Game/GameCanvas";
 import { useEffect, useState } from "react";
 import { useLocalStorageNew } from "@/hooks/useLocalStorageNew";
 import useFullscreen from "@/hooks/useFullScreen";
@@ -9,6 +9,8 @@ import { useSearchParams } from "next/navigation";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import { useSocketStore } from "@/hooks/useSocketStore";
 import { useHotkeys } from "react-hotkeys-hook";
+import classNames from "classnames";
+import { useRef } from "react";
 
 export default function GamePage() {
 
@@ -28,8 +30,9 @@ export default function GamePage() {
         reloadScene()
     })
 
-    const [gameState, setGameState] = useState(false)
+    // const [gameState, setGameState] = useState(false)
 
+    const sidebar = useSpleefGameStore(state => state.sidebar);
     const setSurvivalTimer = useSpleefGameStore(state => state.setSurvivalTimer);
     const setAlive = useSpleefGameStore(state => state.setAlive);
 
@@ -54,6 +57,9 @@ export default function GamePage() {
         exitFullscreen,
         setShowMenu
     }
+
+    const reloadSceneRef = useRef(reloadScene);
+    reloadSceneRef.current = reloadScene;
 
     useEffect(() => {
         reloadScene()
@@ -87,7 +93,15 @@ export default function GamePage() {
     return (
 
         <div
-            className={`spleef-game-page ${isFullscreen && 'fullscreen'}`}
+            className={
+                classNames(
+                    `spleef-game-page ${isFullscreen && 'fullscreen'}`,
+                    {
+                        'fullscreen': isFullscreen,
+                        'sidebar-open': sidebar,
+                    }
+                )
+            }
             id="spleef-game-page"
         >
 
@@ -144,7 +158,7 @@ export default function GamePage() {
 
                 <GameCanvas
                     key={sceneKey}
-                    gameState={gameState}
+                    // gameState={gameState}
                 // playerData={playerData}
                 // setPlayerData={setPlayerData}
                 // players={players}

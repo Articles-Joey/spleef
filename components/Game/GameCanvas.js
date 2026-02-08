@@ -11,10 +11,11 @@ import { Player } from "./Player";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import FPV from "./FPV";
 import Ground from "./Ground";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import Level from "./Level";
 import MyComponentSkyBox from "./SkyBox";
 import Bullet from "./Bullet";
+import Players from "./Players";
 
 // const texture = new TextureLoader().load(`${process.env.NEXT_PUBLIC_CDN}games/Race Game/grass.jpg`)
 
@@ -51,9 +52,15 @@ function GameCanvas(props) {
     //     server
     // } = props;
 
+    const darkMode = useSpleefGameStore(state => state.darkMode);
     const debug = useSpleefGameStore(state => state.debug);
     const controlType = useSpleefGameStore(state => state.controlType);
     const bullets = useSpleefGameStore(state => state.bullets);
+
+    const physicsProps = useMemo(() => ({
+        gravity: [0, -10, 0],
+        defaultContactMaterial: { friction: 0, restitution: 0 }
+    }), [])
 
     let gameContent = (
         <>
@@ -62,9 +69,8 @@ function GameCanvas(props) {
                 position={[0, -1, 0]}
             />
 
-            {controlType == "Mouse and Keyboard" &&
-                <Player />
-            }
+            <Player />
+            <Players />
 
             {bullets.map((bullet) => (
                 <Bullet key={bullet.id} {...bullet} />
@@ -98,7 +104,11 @@ function GameCanvas(props) {
     }
 
     return (
-        <Canvas camera={{ position: [-10, 40, 40], fov: 50 }}>
+        <Canvas
+            shadows
+            camera={{ position: [-10, 40, 40], fov: 50 }}
+            id="game-canvas"
+        >
 
             {/* <OrbitControls
             // autoRotate={gameState?.status == 'In Lobby'}
@@ -113,7 +123,7 @@ function GameCanvas(props) {
             /> */}
 
             <MyComponentSkyBox
-            
+                name={darkMode ? "Cartoon Base NightSky" : "Cartoon Base BlueSky"}
             />
 
             {controlType == "Mouse and Keyboard" &&
@@ -124,7 +134,12 @@ function GameCanvas(props) {
                 />
             }
 
-            <Physics>
+            <Physics
+                gravity={physicsProps.gravity}
+                defaultContactMaterial={physicsProps.defaultContactMaterial}
+                // iterations={20}
+                // tolerance={0.0001}
+            >
 
                 {physicsContent}
 
@@ -132,7 +147,8 @@ function GameCanvas(props) {
 
             {/* <GrassPlane /> */}
 
-            <ambientLight intensity={5} />
+            {/* <ambientLight intensity={5} /> */}
+            <ambientLight intensity={darkMode ? 1 : 5} />
             <spotLight intensity={3000} position={[-50, 100, 50]} angle={5} penumbra={1} />
 
             {/* <pointLight position={[-10, -10, -10]} /> */}

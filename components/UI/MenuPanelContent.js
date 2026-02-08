@@ -6,11 +6,12 @@ import ArticlesButton from "@/components/UI/Button";
 
 // import ControllerPreview from "../../ControllerPreview";
 
-import { useSocketStore } from "@/hooks/useSocketStore";
+// import { useSocketStore } from "@/hooks/useSocketStore";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 // import { useHotkeys } from "react-hotkeys-hook";
 // import { useEffect, useRef } from "react";
 import { Dropdown, DropdownButton } from "react-bootstrap";
+import PeerDetails from "./PeerDetails";
 
 export default function MenuPanelContent(props) {
 
@@ -27,12 +28,14 @@ export default function MenuPanelContent(props) {
         setShowMenu
     } = props;
 
-    const {
-        socket,
-    } = useSocketStore(state => ({
-        socket: state.socket,
-    }));
+    // const {
+    //     socket,
+    // } = useSocketStore(state => ({
+    //     socket: state.socket,
+    // }));
 
+    const darkMode = useSpleefGameStore(state => state.darkMode);
+    const toggleDarkMode = useSpleefGameStore(state => state.toggleDarkMode);
     const debug = useSpleefGameStore(state => state.debug);
     const setDebug = useSpleefGameStore(state => state.setDebug);
     const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
@@ -44,7 +47,7 @@ export default function MenuPanelContent(props) {
 
             <div className="card card-articles card-sm">
 
-                <div className="card-body">
+                <div className="card-body d-flex flex-wrap">
 
                     {/* <div className='flex-header'>
                         <div>Server: {server}</div>
@@ -76,10 +79,10 @@ export default function MenuPanelContent(props) {
 
                     <Link
                         href={'/'}
-                        className=""
+                        className="w-50"
                     >
                         <ArticlesButton
-                            className='w-50'
+                            className='w-100'
                             small
                         >
                             <i className="fad fa-arrow-alt-square-left"></i>
@@ -104,8 +107,40 @@ export default function MenuPanelContent(props) {
                         <span>Fullscreen</span>
                     </ArticlesButton>
 
+                    <div className="w-50 d-flex">
+                        <ArticlesButton
+                            className='flex-grow-1'
+                            small
+                        >
+                            <i className="fad fa-arrow-alt-square-left"></i>
+                            <span>Settings</span>
+                        </ArticlesButton>
+                        <ArticlesButton
+                            className=''
+                            small
+                            active={darkMode}
+                            onClick={() => {
+                                toggleDarkMode()
+                            }}
+                        >
+                            <i className="fad fa-sun"></i>
+                        </ArticlesButton>
+                    </div>
+
+                    <ArticlesButton
+                        className='w-50'
+                        small
+                    >
+                        <i className="fad fa-arrow-alt-square-left"></i>
+                        <span>Sidebar</span>
+                    </ArticlesButton>
+
                 </div>
             </div>
+
+            <PeerDetails 
+                // kickPlayer={kickPlayer} 
+            />
 
             {/* Touch Controls */}
             <div
