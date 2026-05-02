@@ -18,14 +18,16 @@ export const usePeerStore = create((set) => ({
     },
 
     gameState: {
-        players: []
+        players: [],
+        tiles: [],
+        projectiles: [],
     },
     setGameState: (newValue) => {
         set((state) => ({
             gameState: typeof newValue === 'function' ? newValue(state.gameState) : newValue
         }))
     },
-    
+
     bannedIds: [],
     addBannedId: (id) => set((state) => ({ bannedIds: [...state.bannedIds, id] })),
 
@@ -39,7 +41,11 @@ export const usePeerStore = create((set) => ({
     reset: () => set({
         isHost: false,
         peer: null,
-        gameState: { players: [] },
+        gameState: {
+            players: [],
+            tiles: [],
+            projectiles: []
+        },
         bannedIds: [],
         displayId: null
     })

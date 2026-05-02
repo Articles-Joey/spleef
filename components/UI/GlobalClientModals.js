@@ -1,5 +1,9 @@
 "use client";
+import { useAudioStore } from '@/hooks/useAudioStore';
+import { useSocketStore } from '@/hooks/useSocketStore';
 import { useSpleefGameStore } from '@/hooks/useSpleefGameStore';
+import { useStore } from '@/hooks/useStore';
+import useTouchControlsStore from '@/hooks/useTouchControlsStore';
 // import { useStore } from '@/hooks/useStore';
 import dynamic from 'next/dynamic'
 
@@ -9,25 +13,25 @@ const InfoModal = dynamic(
 )
 
 const SettingsModal = dynamic(
-    () => import('@/components/UI/SettingsModal'),
+    () => import('@articles-media/articles-dev-box/SettingsModal'),
     { ssr: false }
 )
 
 const CreditsModal = dynamic(
-    () => import('@/components/UI/CreditsModal'),
+    () => import('@articles-media/articles-dev-box/CreditsModal'),
     { ssr: false }
 )
 
 export default function GlobalClientModals() {
 
-    const showInfoModal = useSpleefGameStore((state) => state.showInfoModal)
-    const setShowInfoModal = useSpleefGameStore((state) => state.setShowInfoModal)
+    const showInfoModal = useStore((state) => state.showInfoModal)
+    const setShowInfoModal = useStore((state) => state.setShowInfoModal)
 
-    const showSettingsModal = useSpleefGameStore((state) => state.showSettingsModal)
-    const setShowSettingsModal = useSpleefGameStore((state) => state.setShowSettingsModal)
+    const showSettingsModal = useStore((state) => state.showSettingsModal)
+    const setShowSettingsModal = useStore((state) => state.setShowSettingsModal)
 
-    const showCreditsModal = useSpleefGameStore((state) => state.showCreditsModal)
-    const setShowCreditsModal = useSpleefGameStore((state) => state.setShowCreditsModal)
+    const showCreditsModal = useStore((state) => state.showCreditsModal)
+    const setShowCreditsModal = useStore((state) => state.setShowCreditsModal)
 
     return (
         <>
@@ -42,6 +46,44 @@ export default function GlobalClientModals() {
                 <SettingsModal
                     show={showSettingsModal}
                     setShow={setShowSettingsModal}
+                    store={useStore}
+                    useAudioStore={useAudioStore}
+                    useTouchControlsStore={useTouchControlsStore}
+                    useSocketStore={useSocketStore}
+                    config={{
+                        tabs: {
+                            'Graphics': {
+                                darkMode: true,
+                                landingAnimation: true
+                            },
+                            'Audio': {
+                                sliders: [
+                                    {
+                                        key: "gameVolume",
+                                        label: "Game Volume"
+                                    },
+                                    {
+                                        key: "musicVolume",
+                                        label: "Music Volume"
+                                    }
+                                ]
+                            },
+                            'Controls': {
+                                // defaultKeyBindings: {
+                                //     // moveUp: "W",
+                                //     // moveDown: "S",
+                                //     // moveLeft: "A",
+                                //     // moveRight: "D",
+                                // }
+                            },
+                            'Multiplayer': {
+                                serverUrl: true,
+                            },
+                            'Other': {
+                                toontownMode: true,
+                            }
+                        }
+                    }}
                 />
             }
 
@@ -49,6 +91,8 @@ export default function GlobalClientModals() {
                 <CreditsModal
                     show={showCreditsModal}
                     setShow={setShowCreditsModal}
+                    owner="Articles-Joey"
+                    repo="spleef"
                 />
             }
         </>

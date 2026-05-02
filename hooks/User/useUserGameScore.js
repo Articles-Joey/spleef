@@ -2,14 +2,24 @@ import useSWR from "swr";
 
 // import { useSelector, useDispatch } from 'react-redux';
 
-import axios from "axios";
+// import axios from "axios";
 import { minutesToMilliseconds } from "date-fns";
 
-const fetcher = (data) => axios.get(data.url, {
-    params: {
-        game: data.game
+const fetcher = async (data) => {
+    const url = new URL(data.url, window.location.origin);
+    url.searchParams.append("game", data.game);
+    const response = await fetch(url.toString(), {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
     }
-}).then((res) => res.data);
+    return response.json();
+};
 
 const useUserGameScore = (params) => {
 

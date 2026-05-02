@@ -6,6 +6,7 @@ import ViewUserModal from "@/components/UI/ViewUserModal"
 
 import IsDev from "@/components/UI/IsDev";
 import ArticlesButton from "./Button";
+import { useStore } from "@/hooks/useStore";
 
 export default function GameInfoModal({
     show,
@@ -15,14 +16,7 @@ export default function GameInfoModal({
 
     const [showModal, setShowModal] = useState(true)
 
-    // const userReduxState = useSelector((state) => state.auth.user_details);
-    const userReduxState = false
-
-    const [showVideo, setShowVideo] = useState()
-
-    useEffect(() => {
-
-    }, [])
+    const darkMode = useStore(state => state.darkMode)
 
     return (
         <>
@@ -46,6 +40,14 @@ export default function GameInfoModal({
                 </Modal.Header>
 
                 <Modal.Body className="flex-column p-0">
+
+                    <div className="ratio ratio-16x9">
+                        {darkMode ?
+                            <img src={"img/background-dark.webp"}></img>
+                            :
+                            <img src={"img/background.webp"}></img>
+                        }
+                    </div>
 
                     <div className="p-3">
 

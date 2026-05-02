@@ -13,7 +13,7 @@ import { usePeerStore } from "@/hooks/usePeerStore"
 // import Duck from "../Models/Duck"
 import SpacesuitModel from "../Models/Spacesuit"
 import ModelBazooka from "../Models/Bazooka"
-import axios from "axios"
+// import axios from "axios"
 import { degToRad } from "three/src/math/MathUtils"
 
 const JUMP_FORCE = 4;

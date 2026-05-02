@@ -12,21 +12,13 @@ import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 // import { useEffect, useRef } from "react";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import PeerDetails from "./PeerDetails";
+import { useStore } from "@/hooks/useStore";
+import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 
 export default function MenuPanelContent(props) {
 
-    const {
-        server,
-        // players,
-        touchControlsEnabled,
-        setTouchControlsEnabled,
-        reloadScene,
-        controllerState,
-        isFullscreen,
-        requestFullscreen,
-        exitFullscreen,
-        setShowMenu
-    } = props;
+    const reloadScene = useStore(state => state.reloadScene)
+    const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
     // const {
     //     socket,
@@ -34,10 +26,12 @@ export default function MenuPanelContent(props) {
     //     socket: state.socket,
     // }));
 
-    const darkMode = useSpleefGameStore(state => state.darkMode);
-    const toggleDarkMode = useSpleefGameStore(state => state.toggleDarkMode);
-    const debug = useSpleefGameStore(state => state.debug);
-    const setDebug = useSpleefGameStore(state => state.setDebug);
+    const darkMode = useStore(state => state.darkMode);
+    const toggleDarkMode = useStore(state => state.toggleDarkMode);
+    const debug = useStore(state => state.debug);
+    const setDebug = useStore(state => state.setDebug);
+    const sidebar = useStore(state => state.sidebar);
+
     const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
     const alive = useSpleefGameStore(state => state.alive);
     const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
@@ -98,7 +92,7 @@ export default function MenuPanelContent(props) {
                             if (isFullscreen) {
                                 exitFullscreen()
                             } else {
-                                requestFullscreen('spleef-game-page')
+                                requestFullscreen()
                             }
                         }}
                     >
@@ -111,6 +105,9 @@ export default function MenuPanelContent(props) {
                         <ArticlesButton
                             className='flex-grow-1'
                             small
+                            onClick={() => {
+                                useStore.getState().setShowSettingsModal(true)
+                            }}
                         >
                             <i className="fad fa-arrow-alt-square-left"></i>
                             <span>Settings</span>
@@ -130,6 +127,10 @@ export default function MenuPanelContent(props) {
                     <ArticlesButton
                         className='w-50'
                         small
+                        active={sidebar}
+                        onClick={() => {
+                            useStore.getState().toggleSidebar()
+                        }}
                     >
                         <i className="fad fa-arrow-alt-square-left"></i>
                         <span>Sidebar</span>
@@ -143,7 +144,7 @@ export default function MenuPanelContent(props) {
             />
 
             {/* Touch Controls */}
-            <div
+            {/* <div
                 className="card card-articles card-sm"
             >
                 <div className="card-body">
@@ -181,7 +182,7 @@ export default function MenuPanelContent(props) {
                     </div>
 
                 </div>
-            </div>
+            </div> */}
 
             {/* Debug Controls */}
             <div

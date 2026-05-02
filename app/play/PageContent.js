@@ -4,7 +4,7 @@ import MenuPanelContent from "@/components/UI/MenuPanelContent";
 import GameCanvas from "@/components/Game/GameCanvas";
 import { useEffect, useState } from "react";
 import { useLocalStorageNew } from "@/hooks/useLocalStorageNew";
-import useFullscreen from "@/hooks/useFullScreen";
+import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 import { useSearchParams } from "next/navigation";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import { useSocketStore } from "@/hooks/useSocketStore";
@@ -12,17 +12,24 @@ import { useHotkeys } from "react-hotkeys-hook";
 import classNames from "classnames";
 import { useRef } from "react";
 
+import GameMenu from '@articles-media/articles-dev-box/GameMenu';
+import { useStore } from "@/hooks/useStore";
+
 export default function GamePage() {
 
     const searchParams = useSearchParams()
     const searchParamsObject = Object.fromEntries(searchParams.entries());
     const { server } = searchParamsObject
 
-    const [showMenu, setShowMenu] = useState(false)
+    // const [showMenu, setShowMenu] = useState(false)
 
-    const [touchControlsEnabled, setTouchControlsEnabled] = useLocalStorageNew("game:touchControlsEnabled", false)
+    // const [touchControlsEnabled, setTouchControlsEnabled] = useLocalStorageNew("game:touchControlsEnabled", false)
 
-    const [sceneKey, setSceneKey] = useState(0);
+    // const [sceneKey, setSceneKey] = useState(0);
+    const setShowMenu = useStore(state => state.setShowMenu);
+    const sceneKey = useStore(state => state.sceneKey);
+    const setSceneKey = useStore(state => state.setSceneKey);
+    const sidebar = useStore(state => state.sidebar);
 
     // const [reloadableKey, setReloadableKey] = useState(0)
 
@@ -32,7 +39,6 @@ export default function GamePage() {
 
     // const [gameState, setGameState] = useState(false)
 
-    const sidebar = useSpleefGameStore(state => state.sidebar);
     const setSurvivalTimer = useSpleefGameStore(state => state.setSurvivalTimer);
     const setAlive = useSpleefGameStore(state => state.setAlive);
 
@@ -40,23 +46,23 @@ export default function GamePage() {
     const reloadScene = () => {
         setSurvivalTimer(0)
         setAlive(true)
-        setSceneKey((prevKey) => prevKey + 1);
+        useStore.getState().reloadScene()
     };
 
     const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
-    let panelProps = {
-        server,
-        // players,
-        touchControlsEnabled,
-        setTouchControlsEnabled,
-        reloadScene,
-        // controllerState,
-        isFullscreen,
-        requestFullscreen,
-        exitFullscreen,
-        setShowMenu
-    }
+    // let panelProps = {
+    //     // server,
+    //     // players,
+    //     touchControlsEnabled,
+    //     setTouchControlsEnabled,
+    //     // reloadScene,
+    //     // controllerState,
+    //     // isFullscreen,
+    //     // requestFullscreen,
+    //     // exitFullscreen,
+    //     // setShowMenu
+    // }
 
     const reloadSceneRef = useRef(reloadScene);
     reloadSceneRef.current = reloadScene;
@@ -98,14 +104,26 @@ export default function GamePage() {
                     `spleef-game-page ${isFullscreen && 'fullscreen'}`,
                     {
                         'fullscreen': isFullscreen,
-                        'sidebar-open': sidebar,
+                        'show-sidebar': sidebar,
                     }
                 )
             }
             id="spleef-game-page"
         >
 
-            <div className="menu-bar card card-articles p-1 justify-content-center">
+            <GameMenu
+                useStore={useStore}
+                LeftPanelContent={MenuPanelContent}
+                menuBarConfig={{
+                    style: "Corner Button",
+                    menuBarButtonPosition: "Left"
+                }}
+                sidebarConfig={{
+                    style: "Static Panel",
+                }}
+            />
+
+            {/* <div className="menu-bar card card-articles p-1 justify-content-center">
 
                 <div className='flex-header align-items-center'>
 
@@ -120,29 +138,27 @@ export default function GamePage() {
                         <span>Menu</span>
                     </ArticlesButton>
 
-                    {/* <MenuBarControls /> */}
-
                 </div>
 
-            </div>
+            </div> */}
 
-            <div className={`mobile-menu ${showMenu && 'show'}`}>
+            {/* <div className={`mobile-menu ${showMenu && 'show'}`}>
                 <MenuPanelContent
                     {...panelProps}
                 />
-            </div>
+            </div> */}
 
             {/* <TouchControls
                     touchControlsEnabled={touchControlsEnabled}
                 /> */}
 
-            <div className='panel-left card rounded-0 d-none d-lg-flex'>
+            {/* <div className='panel-left card rounded-0 d-none d-lg-flex'>
 
                 <MenuPanelContent
                     {...panelProps}
                 />
 
-            </div>
+            </div> */}
 
             {/* <div className='game-info'>
                     <div className="card card-articles card-sm">

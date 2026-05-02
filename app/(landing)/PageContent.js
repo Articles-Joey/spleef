@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useContext, useState, Suspense } from 'react';
+import { useEffect, useContext, useState, Suspense, use } from 'react';
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -31,6 +31,7 @@ import useUserDetails from '@articles-media/articles-dev-box/useUserDetails';
 import useUserToken from '@articles-media/articles-dev-box/useUserToken';
 import PeerDetails from '@/components/UI/PeerDetails';
 import { usePeerStore } from '@/hooks/usePeerStore';
+import { useStore } from '@/hooks/useStore';
 
 const game_key = 'spleef'
 const game_name = 'Spleef'
@@ -46,28 +47,26 @@ export default function GameLobbyPage() {
     // const userReduxState = useSelector((state) => state.auth.user_details)
     // const userReduxState = false
 
+    const _hasHydrated = useStore(state => state._hasHydrated)
+
     const [joinGame, setJoinGame] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
 
-    // const [nickname, setNickname] = useLocalStorageNew("game:nickname", userReduxState.display_name)
-    const nickname = useSpleefGameStore(state => state.nickname)
-    const darkMode = useSpleefGameStore(state => state.darkMode);
-    const toggleDarkMode = useSpleefGameStore(state => state.toggleDarkMode);
-    const setNickname = useSpleefGameStore(state => state.setNickname)
-    const setShowInfoModal = useSpleefGameStore(state => state.setShowInfoModal)
-    const setShowSettingsModal = useSpleefGameStore(state => state.setShowSettingsModal)
-    const setShowCreditsModal = useSpleefGameStore(state => state.setShowCreditsModal)
+    const nickname = useStore(state => state.nickname)
+    const setNickname = useStore(state => state.setNickname)
+    const randomNickname = useStore(state => state.randomNickname)
+
+    const darkMode = useStore(state => state.darkMode);
+    const toggleDarkMode = useStore(state => state.toggleDarkMode);
+
+    const setShowInfoModal = useStore(state => state.setShowInfoModal)
+    const setShowSettingsModal = useStore(state => state.setShowSettingsModal)
+    const setShowCreditsModal = useStore(state => state.setShowCreditsModal)
+
+    const lobbyDetails = useStore(state => state.lobbyDetails)
+    // const setLobbyDetails = useStore(state => state.setLobbyDetails)
 
     const resetPeerStore = usePeerStore(state => state.reset);
-
-    // const [showInfoModal, setShowInfoModal] = useState(false)
-    // const [showSettingsModal, setShowSettingsModal] = useState(false)
-    // const [showPrivateGameModal, setShowPrivateGameModal] = useState(false)
-
-    const [lobbyDetails, setLobbyDetails] = useState({
-        players: [],
-        games: [],
-    })
 
     const {
         data: userHighScore,
@@ -165,27 +164,6 @@ export default function GameLobbyPage() {
                 />
             </Suspense>
 
-            {/* {showInfoModal &&
-                <InfoModal
-                    show={showInfoModal}
-                    setShow={setShowInfoModal}
-                />
-            }
-
-            {showSettingsModal &&
-                <SettingsModal
-                    show={showSettingsModal}
-                    setShow={setShowSettingsModal}
-                />
-            }
-
-            {showPrivateGameModal &&
-                <PrivateGameModal
-                    show={showPrivateGameModal}
-                    setShow={setShowPrivateGameModal}
-                />
-            } */}
-
             <div className='background-wrap'>
                 <img
                     src={darkMode ? `img/background-dark.webp` : `img/background.webp`}
@@ -220,7 +198,7 @@ export default function GameLobbyPage() {
 
                     <div className='mb-3'>
                         <PeerDetails
-                            // kickPlayer={kickPlayer} 
+                        // kickPlayer={kickPlayer} 
                         />
                     </div>
 
@@ -258,20 +236,29 @@ export default function GameLobbyPage() {
 
                                 <div className="form-group articles mb-0">
                                     <label htmlFor="nickname">Nickname</label>
-                                    {/* <SingleInput
-                                        value={nickname}
-                                        setValue={setNickname}
-                                        noMargin
-                                    /> */}
-                                    <input
-                                        type="text"
-                                        placeholder={"Display name or username"}
-                                        value={nickname}
-                                        onChange={(e) => {
-                                            setNickname(e.target.value)
-                                        }}
-                                        className={`form-control form-control-sm`}
-                                    />
+                                    <div className="d-flex align-items-center">
+                                        <input
+                                            type="text"
+                                            value={_hasHydrated ? nickname : ''}
+                                            disabled={!_hasHydrated}
+                                            id="nickname"
+                                            name="nickname"
+                                            placeholder="Enter your nickname"
+                                            onChange={(e) => {
+                                                setNickname(e.target.value)
+                                            }}
+                                            className={`form-control form-control-sm`}
+                                        />
+                                        <ArticlesButton
+                                            small
+                                            className=""
+                                            onClick={() => {
+                                                randomNickname()
+                                            }}
+                                        >
+                                            <i className="fad fa-random"></i>
+                                        </ArticlesButton>
+                                    </div>
                                 </div>
 
                                 <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
@@ -467,7 +454,7 @@ export default function GameLobbyPage() {
                                 }}
                             >
                                 <i className="fad fa-info-square"></i>
-                                Rules & Controls
+                                Info
                             </ArticlesButton>
 
                             <Link href={'https://github.com/Articles-Joey/spleef'} className='w-50' target='_blank' rel='noreferrer'>

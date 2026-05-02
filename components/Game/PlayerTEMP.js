@@ -6,7 +6,7 @@ import { useKeyboard } from "@/hooks/useKeyboard"
 
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore"
 // import { useSelector } from "react-redux"
-import axios from "axios"
+// import axios from "axios"
 import ModelBazooka from "../Models/Bazooka"
 import { degToRad } from "three/src/math/MathUtils"
 
@@ -79,16 +79,16 @@ function PlayerBase() {
                     setBestSurvivalTimer(currentSurvivalTime)
 
                     if (userReduxState?._id) {
-                        axios.post('/api/user/community/games/scoreboard/set', {
-                            game: 'Spleef',
-                            value: +currentSurvivalTime
-                        })
-                            .then(response => {
-                                console.log(response.data)
-                            })
-                            .catch(response => {
-                                console.log(response.data)
-                            })
+                        // axios.post('/api/user/community/games/scoreboard/set', {
+                        //     game: 'Spleef',
+                        //     value: +currentSurvivalTime
+                        // })
+                        //     .then(response => {
+                        //         console.log(response.data)
+                        //     })
+                        //     .catch(response => {
+                        //         console.log(response.data)
+                        //     })
                     }
 
                 }
