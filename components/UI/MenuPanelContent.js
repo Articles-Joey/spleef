@@ -13,7 +13,9 @@ import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import PeerDetails from "./PeerDetails";
 import { useStore } from "@/hooks/useStore";
+
 import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
+import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup';
 
 export default function MenuPanelContent(props) {
 
@@ -35,6 +37,7 @@ export default function MenuPanelContent(props) {
     const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
     const alive = useSpleefGameStore(state => state.alive);
     const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
+    const teleportToPosition = useSpleefGameStore(state => state.teleportToPosition);
 
     return (
         <div className='w-100'>
@@ -43,98 +46,10 @@ export default function MenuPanelContent(props) {
 
                 <div className="card-body d-flex flex-wrap">
 
-                    {/* <div className='flex-header'>
-                        <div>Server: {server}</div>
-                        <div>Players: {0}/4</div>
-                    </div> */}
-
-                    {/* {!socket?.connected &&
-                        <div
-                            className=""
-                        >
-
-                            <div className="">
-
-                                <div className="h6 mb-1">Not connected</div>
-
-                                <ArticlesButton
-                                    onClick={() => {
-                                        console.log("Reconnect")
-                                        socket.connect()
-                                    }}
-                                >
-                                    Reconnect!
-                                </ArticlesButton>
-
-                            </div>
-
-                        </div>
-                    } */}
-
-                    <Link
-                        href={'/'}
-                        className="w-50"
-                    >
-                        <ArticlesButton
-                            className='w-100'
-                            small
-                        >
-                            <i className="fad fa-arrow-alt-square-left"></i>
-                            <span>Leave Game</span>
-                        </ArticlesButton>
-                    </Link>
-
-                    <ArticlesButton
-                        small
-                        className="w-50"
-                        active={isFullscreen}
-                        onClick={() => {
-                            if (isFullscreen) {
-                                exitFullscreen()
-                            } else {
-                                requestFullscreen()
-                            }
-                        }}
-                    >
-                        {isFullscreen && <span>Exit </span>}
-                        {!isFullscreen && <span><i className='fad fa-expand'></i></span>}
-                        <span>Fullscreen</span>
-                    </ArticlesButton>
-
-                    <div className="w-50 d-flex">
-                        <ArticlesButton
-                            className='flex-grow-1'
-                            small
-                            onClick={() => {
-                                useStore.getState().setShowSettingsModal(true)
-                            }}
-                        >
-                            <i className="fad fa-arrow-alt-square-left"></i>
-                            <span>Settings</span>
-                        </ArticlesButton>
-                        <ArticlesButton
-                            className=''
-                            small
-                            active={darkMode}
-                            onClick={() => {
-                                toggleDarkMode()
-                            }}
-                        >
-                            <i className="fad fa-sun"></i>
-                        </ArticlesButton>
-                    </div>
-
-                    <ArticlesButton
-                        className='w-50'
-                        small
-                        active={sidebar}
-                        onClick={() => {
-                            useStore.getState().toggleSidebar()
-                        }}
-                    >
-                        <i className="fad fa-arrow-alt-square-left"></i>
-                        <span>Sidebar</span>
-                    </ArticlesButton>
+                    <GameMenuPrimaryButtonGroup 
+                        useStore={useStore}
+                        type="GameMenu"
+                    />
 
                 </div>
             </div>
@@ -202,11 +117,14 @@ export default function MenuPanelContent(props) {
 
                     <div className='d-flex flex-column'>
 
-                        <div>
+                        <div className="d-flex flex-wrap">
+
                             <ArticlesButton
                                 size="sm"
                                 className="w-50"
-                                onClick={reloadScene}
+                                onClick={() => {
+                                    reloadScene()
+                                }}
                             >
                                 <i className="fad fa-redo"></i>
                                 Reload Game
@@ -220,9 +138,17 @@ export default function MenuPanelContent(props) {
                                 <i className="fad fa-redo"></i>
                                 Reset Camera
                             </ArticlesButton>
-                        </div>
 
-                        <div className='w-50'>
+                            <ArticlesButton
+                                size="sm"
+                                className="w-50"
+                                onClick={() => teleportToPosition(7, 30, 7)}
+                            >
+                                <i className="fad fa-redo"></i>
+                                Reset Player
+                            </ArticlesButton>
+
+                            <div className='w-50'>
                             <DropdownButton
                                 variant="articles w-100"
                                 size='sm'
@@ -259,6 +185,10 @@ export default function MenuPanelContent(props) {
 
                             </DropdownButton>
                         </div>
+
+                        </div>
+
+                        
 
                     </div>
 

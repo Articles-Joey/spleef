@@ -16,6 +16,7 @@ import Level from "./Level";
 import MyComponentSkyBox from "./SkyBox";
 import Bullet from "./Bullet";
 import Players from "./Players";
+import { useStore } from "@/hooks/useStore";
 
 // const texture = new TextureLoader().load(`${process.env.NEXT_PUBLIC_CDN}games/Race Game/grass.jpg`)
 
@@ -52,8 +53,9 @@ function GameCanvas(props) {
     //     server
     // } = props;
 
-    const darkMode = useSpleefGameStore(state => state.darkMode);
-    const debug = useSpleefGameStore(state => state.debug);
+    const darkMode = useStore(state => state.darkMode);
+    const debug = useStore(state => state.debug);
+
     const controlType = useSpleefGameStore(state => state.controlType);
     const bullets = useSpleefGameStore(state => state.bullets);
 
@@ -70,6 +72,7 @@ function GameCanvas(props) {
             />
 
             <Player />
+            
             <Players />
 
             {bullets.map((bullet) => (
@@ -122,9 +125,7 @@ function GameCanvas(props) {
             // {...props} 
             /> */}
 
-            <MyComponentSkyBox
-                name={darkMode ? "Cartoon Base NightSky" : "Cartoon Base BlueSky"}
-            />
+            <MyComponentSkyBox />
 
             {controlType == "Mouse and Keyboard" &&
                 <FPV

@@ -151,7 +151,7 @@ function PlayerBase() {
         // If lastPos is [0,0,0] (default store state), use spawn point [0,1,0]
         // Otherwise use the stored position
         const spawnPos = (lastPos[0] === 0 && lastPos[1] === 0 && lastPos[2] === 0) 
-            ? [0, 1, 0] 
+            ? [7, 40, 7] 
             : lastPos;
 
         return {
@@ -215,8 +215,15 @@ function PlayerBase() {
             camera.getWorldDirection(direction)
             
             const spawnPos = new Vector3()
-            camera.getWorldPosition(spawnPos)
-            spawnPos.add(direction.clone().multiplyScalar(2)) // Spawn slightly in front
+
+            if (isThirdPerson) {
+                // Spawn from player body position to avoid intersecting the model
+                spawnPos.set(pos.current[0], pos.current[1], pos.current[2])
+                spawnPos.add(direction.clone().multiplyScalar(1)) // Push slightly in look direction
+            } else {
+                camera.getWorldPosition(spawnPos)
+                spawnPos.add(direction.clone().multiplyScalar(2)) // Spawn slightly in front of camera
+            }
 
             const velocity = direction.multiplyScalar(30) // Speed 30
 
@@ -229,7 +236,7 @@ function PlayerBase() {
 
         document.addEventListener('mousedown', handleMouseDown)
         return () => document.removeEventListener('mousedown', handleMouseDown)
-    }, [alive, addBullet, camera])
+    }, [alive, addBullet, camera, isThirdPerson])
 
     // Survival timer
     useEffect(() => {

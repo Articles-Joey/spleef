@@ -30,6 +30,7 @@ export default function GamePage() {
     const sceneKey = useStore(state => state.sceneKey);
     const setSceneKey = useStore(state => state.setSceneKey);
     const sidebar = useStore(state => state.sidebar);
+    const menuOpen = useStore(state => state.menuOpen);
 
     // const [reloadableKey, setReloadableKey] = useState(0)
 
@@ -99,16 +100,15 @@ export default function GamePage() {
     return (
 
         <div
-            className={
-                classNames(
-                    `spleef-game-page ${isFullscreen && 'fullscreen'}`,
-                    {
-                        'fullscreen': isFullscreen,
-                        'show-sidebar': sidebar,
-                    }
-                )
-            }
-            id="spleef-game-page"
+            className={classNames(
+                `${process.env.NEXT_PUBLIC_GAME_KEY}-game-page`,
+                {
+                    'menu-open': menuOpen,
+                    'fullscreen': useFullscreen().isFullscreen,
+                    'show-sidebar': sidebar,
+                }
+            )}
+            id={`${process.env.NEXT_PUBLIC_GAME_KEY}-game-page`}
         >
 
             <GameMenu
@@ -123,61 +123,10 @@ export default function GamePage() {
                 }}
             />
 
-            {/* <div className="menu-bar card card-articles p-1 justify-content-center">
-
-                <div className='flex-header align-items-center'>
-
-                    <ArticlesButton
-                        small
-                        active={showMenu}
-                        onClick={() => {
-                            setShowMenu(prev => !prev)
-                        }}
-                    >
-                        <i className="fad fa-bars"></i>
-                        <span>Menu</span>
-                    </ArticlesButton>
-
-                </div>
-
-            </div> */}
-
-            {/* <div className={`mobile-menu ${showMenu && 'show'}`}>
-                <MenuPanelContent
-                    {...panelProps}
-                />
-            </div> */}
-
-            {/* <TouchControls
-                    touchControlsEnabled={touchControlsEnabled}
-                /> */}
-
-            {/* <div className='panel-left card rounded-0 d-none d-lg-flex'>
-
-                <MenuPanelContent
-                    {...panelProps}
-                />
-
-            </div> */}
-
-            {/* <div className='game-info'>
-                    <div className="card card-articles card-sm">
-                        <div className="card-body">
-                            <pre> 
-                                {JSON.stringify(playerData, undefined, 2)}
-                            </pre>
-                        </div>
-                    </div>
-                </div> */}
-
             <div className='canvas-wrap'>
 
                 <GameCanvas
                     key={sceneKey}
-                    // gameState={gameState}
-                // playerData={playerData}
-                // setPlayerData={setPlayerData}
-                // players={players}
                 />
 
             </div>

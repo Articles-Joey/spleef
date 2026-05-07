@@ -14,12 +14,9 @@ import "@articles-media/articles-dev-box/dist/style.css";
 import "@articles-media/articles-gamepad-helper/dist/articles-gamepad-helper.css";
 
 import LayoutClient from './layout-client';
-import DarkModeHandler from '@/components/UI/DarkModeHandler';
 import GlobalClientModals from '@/components/UI/GlobalClientModals';
 import { Suspense } from 'react';
 import PeerManager from '@/components/PeerManager';
-
-// import SocketLogicHandler from "@/components/SocketLogicHandler";
 
 export const metadata = {
   title: "Spleef",

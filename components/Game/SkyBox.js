@@ -1,10 +1,13 @@
 import defaultSkyboxes from "@/components/Game/defaultSkyboxes";
+import { useStore } from "@/hooks/useStore";
 import { useThree } from "@react-three/fiber";
 import { memo, useEffect, useRef } from "react";
 import { CubeTextureLoader } from "three";
 // import { useStore } from "../../../hooks/useStore";
 
-const MyComponentSkyBox = memo(({ name }) => {
+const MyComponentSkyBox = memo(({  }) => {
+
+    const darkMode = useStore(state => state.darkMode);
 
     const { scene } = useThree();
 
@@ -23,9 +26,9 @@ const MyComponentSkyBox = memo(({ name }) => {
 
     useEffect(() => {
 
-        let defaultSkyboxLookup = defaultSkyboxes.find(obj => obj.name == (name || "Cartoon Base BlueSky"))
+        let defaultSkyboxLookup = defaultSkyboxes.find(obj => obj.name == (darkMode ? "Cartoon Base NightSky" : "Cartoon Base BlueSky"))
 
-        if (defaultSkyboxLookup && previousBackground.current !==  "Cartoon Base BlueSky") {
+        if (defaultSkyboxLookup && previousBackground.current !==  (darkMode ? "Cartoon Base NightSky" : "Cartoon Base BlueSky")) {
 
             // let defaultSkyboxLookup = defaultSkyboxes.find(obj => obj.name == sceneSettings?.skybox?.name)
 
@@ -44,7 +47,7 @@ const MyComponentSkyBox = memo(({ name }) => {
 
             // Set the scene background property to the resulting texture.
             scene.background = texture;
-            previousBackground.current = "Cartoon Base BlueSky";
+            previousBackground.current = darkMode ? "Cartoon Base NightSky" : "Cartoon Base BlueSky";
 
         }
 
@@ -70,7 +73,7 @@ const MyComponentSkyBox = memo(({ name }) => {
             scene.background = null;
         };
 
-    }, [loader, scene, name]);
+    }, [loader, scene, darkMode]);
 
     // return null;
 

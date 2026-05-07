@@ -25,6 +25,8 @@ const ReturnToLauncherButton = dynamic(() =>
     import('@articles-media/articles-dev-box/ReturnToLauncherButton'),
     { ssr: false }
 );
+import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup';
+import SessionButton from '@articles-media/articles-dev-box/SessionButton';
 import { GamepadKeyboard, PieMenu } from '@articles-media/articles-gamepad-helper';
 
 import useUserDetails from '@articles-media/articles-dev-box/useUserDetails';
@@ -86,7 +88,7 @@ export default function GameLobbyPage() {
         isLoading: userTokenLoading,
         mutate: userTokenMutate
     } = useUserToken(
-        "3021"
+        process.env.NEXT_PUBLIC_GAME_PORT
     );
 
     const {
@@ -418,87 +420,49 @@ export default function GameLobbyPage() {
 
                         <div className="card-footer d-flex flex-wrap justify-content-center">
 
-                            <div className='w-50 d-flex'>
-                                <ArticlesButton
-                                    className={`flex-grow-1`}
-                                    small
-                                    onClick={() => {
-                                        setShowSettingsModal(true)
-                                    }}
-                                >
-                                    <i className="fad fa-cog"></i>
-                                    Settings
-                                </ArticlesButton>
-                                <ArticlesButton
-                                    className={``}
-                                    small
-                                    active={darkMode}
-                                    onClick={() => {
-                                        toggleDarkMode()
-                                    }}
-                                >
-                                    {
-                                        darkMode ?
-                                            <i className="fad fa-sun"></i>
-                                            :
-                                            <i className="fad fa-moon"></i>
-                                    }
-                                </ArticlesButton>
-                            </div>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setShowInfoModal(true)
-                                }}
-                            >
-                                <i className="fad fa-info-square"></i>
-                                Info
-                            </ArticlesButton>
-
-                            <Link href={'https://github.com/Articles-Joey/spleef'} className='w-50' target='_blank' rel='noreferrer'>
-                                <ArticlesButton
-                                    className={`w-100`}
-                                    small
-                                    onClick={() => {
-
-                                    }}
-                                >
-                                    <i className="fab fa-github"></i>
-                                    GitHub
-                                </ArticlesButton>
-                            </Link>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setShowCreditsModal(true)
-                                }}
-                            >
-                                <i className="fad fa-users"></i>
-                                Credits
-                            </ArticlesButton>
+                            <GameMenuPrimaryButtonGroup 
+                                useStore={useStore}
+                                type="Landing"
+                            />
 
                         </div>
 
                     </div>
+
+                    <SessionButton
+                        port={process.env.NEXT_PUBLIC_GAME_PORT}
+                        friendsButton={true}
+                    />
 
                     <ReturnToLauncherButton />
 
                 </div>
 
                 <GameScoreboard
-                    game={game_name}
+                    game={process.env.NEXT_PUBLIC_GAME_NAME}
                     style="Default"
                     darkMode={darkMode ? true : false}
+                    prepend={
+                        <>
+                            {/* <div
+                                style={{
+                                    width: '100%',
+                                    height: '200px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <RotatingMascot />
+                            </div> */}
+                        </>
+                    }
                 />
 
                 <Ad
                     style="Default"
                     section={"Games"}
-                    section_id={game_name}
+                    section_id={process.env.NEXT_PUBLIC_GAME_NAME}
                     darkMode={darkMode ? true : false}
                     user_ad_token={userToken}
                     userDetails={userDetails}

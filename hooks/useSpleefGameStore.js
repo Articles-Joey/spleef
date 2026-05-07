@@ -16,49 +16,6 @@ export const useSpleefGameStore = create()(
                 });
             },
 
-            darkMode: null,
-            toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-            setDarkMode: (newValue) => {
-                set({ darkMode: newValue })
-            },
-
-            sidebar: false,
-            setSidebar: (newValue) => {
-                set({ sidebar: newValue })
-            },
-
-            showMenu: false,
-            setShowMenu: (newValue) => {
-                set({ showMenu: newValue })
-            },
-
-            showCreditsModal: false,
-            setShowCreditsModal: (value) => set({ showCreditsModal: value }),
-
-            showInfoModal: false,
-            setShowInfoModal: (value) => set({ showInfoModal: value }),
-
-            showSettingsModal: false,
-            setShowSettingsModal: (value) => set({ showSettingsModal: value }),
-
-            showInviteModal: false,
-            setShowInviteModal: (value) => set({ showInviteModal: value }),
-
-            graphicsQuality: "High",
-            setGraphicsQuality: (value) => set({ graphicsQuality: value }),
-
-            nickname: "",
-            setNickname: (newValue) => {
-                set({ nickname: newValue })
-            },
-
-            audioSettings: {
-                enabled: true,
-                backgroundMusicVolume: 50,
-                soundEffectsVolume: 50,
-            },
-            setAudioSettings: (newValue) => set({ audioSettings: newValue }),
-
             // Mouse and Keyboard
             // Touch
             controlType: "Mouse and Keyboard",
@@ -94,13 +51,6 @@ export const useSpleefGameStore = create()(
                 }))
             },
 
-            debug: false,
-            setDebug: (newValue) => {
-                set((prev) => ({
-                    debug: newValue
-                }))
-            },
-
             ref: null,
             api: null,
             // position: [0, 0, 0], // Initial sphere position
@@ -118,6 +68,14 @@ export const useSpleefGameStore = create()(
             sprintEnergy: 5,
             setSprintEnergy: (sprintEnergy) => set({ sprintEnergy }),
 
+            teleportToPosition: (x, y, z) => {
+                const { api } = get();
+                if (api) {
+                    api.position.set(x, y, z);
+                    api.velocity.set(0, 0, 0);
+                }
+            },
+
             tagCounter: 0,
             setTagCounter: (tagCounter) => set({ tagCounter }),
 
@@ -130,29 +88,13 @@ export const useSpleefGameStore = create()(
 
         }),
         {
-            name: 'spleef-game-storage', // name of the item in the storage (must be unique)
-            version: 1,
+            name: 'spleef-game-storage',
+            version: 2,
             onRehydrateStorage: () => (state) => {
                 state.setHasHydrated(true)
             },
             partialize: (state) => ({
-
-                darkMode: state.darkMode,
-                sidebar: state.sidebar,
-                showMenu: state.showMenu,
-
-                // theme: state.theme,
-                nickname: state.nickname,
-
-                // renderMode: state.renderMode,
-
-                touchControlsEnabled: state.touchControlsEnabled,
-                // cameraShakeEnabled: state.cameraShakeEnabled,
-
-                // debug: state.debug,
-                // devDebugPanel: state.devDebugPanel,
-                // debugTab: state.debugTab,
-                audioSettings: state.audioSettings,
+                // darkMode: state.darkMode,
             }),
         },
     ),

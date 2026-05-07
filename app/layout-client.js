@@ -1,10 +1,8 @@
 "use client"
-// import { useEffect } from "react";
-// import dynamic from "next/dynamic";
-
-import GlobalBody from '@articles-media/articles-dev-box/GlobalBody';
 import DarkModeHandler from "@articles-media/articles-dev-box/DarkModeHandler";
 import { useStore } from '@/hooks/useStore';
+import GlobalBody from '@articles-media/articles-dev-box/GlobalBody';
+// import ToontownModeHandler from '@articles-media/articles-dev-box/ToontownModeHandler';
 
 export default function LayoutClient({ children }) {
 
@@ -14,6 +12,9 @@ export default function LayoutClient({ children }) {
             <DarkModeHandler
                 useStore={useStore}
             />
+            {/* <ToontownModeHandler 
+                useStore={useStore}
+            /> */}
         </>
     );
 }

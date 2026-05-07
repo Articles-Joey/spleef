@@ -13,7 +13,7 @@ export default function PeerManager() {
     const params = Object.fromEntries(searchParams.entries());
     const { server } = params
 
-    const nickname = useSpleefGameStore(state => state.nickname);
+    // const nickname = useSpleefGameStore(state => state.nickname);
 
     // PeerJS Refs
     const connectionsRef = useRef({});
