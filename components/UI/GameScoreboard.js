@@ -1,191 +1,80 @@
-import { useEffect, useState } from 'react'
+"use client";
 
-// import axios from 'axios'
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import ReplayIcon from "@mui/icons-material/Replay";
+import SettingsIcon from "@mui/icons-material/Settings";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import ArticlesModal from "./ArticlesModal";
+import ArticlesSwitch from "./ArticlesSwitch";
+import ArticlesButton from "./Button";
+import ViewUserModal from "./ViewUserModal";
+import useGameScoreboard from "@/hooks/useGameScoreboard";
 
-import Modal from 'react-bootstrap/Modal';
-
-// import { useHotkeys } from 'react-hotkeys-hook';
-
-import ViewUserModal from '@/components/UI/ViewUserModal';
-import ArticlesSwitch from '@/components/UI/ArticlesSwitch';
-import ArticlesButton from '@/components/UI/Button';
-import useGameScoreboard from '@/hooks/useGameScoreboard';
-
-function Page({ game, reloadScoreboard, setReloadScoreboard }) {
-
-    const [showSettings, setShowSettings] = useState(false)
-
-    // const [scoreboard, setScoreboard] = useState([])
-
-    const [visible, setVisible] = useState(false)
-
-    const {
-        data: scoreboard,
-        isLoading: scoreboardIsLoading,
-        mutate: scoreboardMutate
-    } = useGameScoreboard({
-        game: game
-    })
-
-    // function loadScoreboard() {
-
-    //     axios.get('/api/community/games/scoreboard', {
-    //         params: {
-    //             game: game
-    //         }
-    //     })
-    //         .then(response => {
-    //             console.log(response.data)
-    //             setScoreboard(response.data)
-    //         })
-    //         .catch(response => {
-    //             console.log(response.data)
-    //         })
-
-    // }
+export default function GameScoreboard({ game, reloadScoreboard, setReloadScoreboard }) {
+    const [showSettings, setShowSettings] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const { data: scoreboard, mutate: scoreboardMutate } = useGameScoreboard({ game });
 
     useEffect(() => {
-
-        // loadScoreboard()
-
-    }, [])
-
-    useEffect(() => {
-
         if (reloadScoreboard) {
-            setReloadScoreboard(false)
-            // loadScoreboard()
-            scoreboardMutate()
+            setReloadScoreboard?.(false);
+            scoreboardMutate();
         }
-
-    }, [reloadScoreboard])
+    }, [reloadScoreboard, setReloadScoreboard, scoreboardMutate]);
 
     return (
-        <div className="scoreboard">
+        <Box sx={{ width: "100%", maxWidth: 300 }}>
+            {showSettings && (
+                <ArticlesModal show={showSettings} setShow={setShowSettings} title="Scoreboard Settings">
+                    <FormControlLabel
+                        sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
+                        labelPlacement="start"
+                        label={<Box sx={{ display: "flex", alignItems: "center", gap: "0.2rem" }}><EmojiEventsIcon fontSize="small" />Join Scoreboard?</Box>}
+                        control={<ArticlesSwitch checked={visible} setChecked={setVisible} />}
+                    />
+                </ArticlesModal>
+            )}
 
-            <Modal show={showSettings} size={'md'} className="articles-modal" centered onHide={() => setShowSettings(false)}>
-
-                <Modal.Header>
-                    <Modal.Title>
-                        Scoreboard Settings
-                    </Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-
-                    <div
-                        className="d-flex justify-content-between align-items-center"
-                        onClick={() => setVisible(!visible)}
-                    >
-
-                        <div>
-                            <i className="fas fa-trophy-alt"></i>
-                            <span>Join Scoreboard?</span>
-                        </div>
-
-                        <ArticlesSwitch
-                            checked={visible}
-                        />
-
-                    </div>
-
-                </Modal.Body>
-
-                <Modal.Footer className="justify-content-between">
-
-                    <ArticlesButton
-                        variant="articles"
-                        onClick={() => {
-                            setShowSettings(false)
-                        }}
-                    >
-                        Close
+            <Card sx={{ bgcolor: "game.card", mb: "1rem", "@media (min-width: 992px)": { mb: 0 } }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: "1rem", py: "0.5rem", borderBottom: 1, borderColor: "divider" }}>
+                    <Box component="span">{game} Scoreboard</Box>
+                    <ArticlesButton small aria-label="Refresh scoreboard" onClick={() => scoreboardMutate()}>
+                        <ReplayIcon fontSize="small" />
                     </ArticlesButton>
-
-                    {/* It is async */}
-                    {/* <ArticlesButton variant="success" onClick={() => {
-                        setShowSettings(false)
-                    }}>
-                        Save
-                    </ArticlesButton> */}
-
-                </Modal.Footer>
-
-            </Modal>
-
-            <div className="card card-articles card-sm mb-3 mb-lg-0">
-
-                <div className="card-header d-flex justify-content-between align-items-center">
-
-                    <span>{game} Scoreboard</span>
-
-                    <ArticlesButton
-                        onClick={() => {
-                            scoreboardMutate()
-                        }}
-                        small
-                    >
-                        <i className="fad fa-redo me-0"></i>
+                </Box>
+                <Box>
+                    {!scoreboard?.length && <Typography sx={{ fontSize: "0.875em", p: "0.5rem" }}>No scores yet</Typography>}
+                    {scoreboard?.map((doc, index) => (
+                        <Box key={doc._id} sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between", borderBottom: 1, borderColor: "divider", p: "0.5rem" }}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", lineHeight: 1.25 }}>
+                                <Box sx={{ display: "flex" }}>
+                                    <Typography component="h5" sx={{ fontSize: "1.25rem", m: "0 1rem 0 0" }}>{index + 1}</Typography>
+                                    <Box sx={{ lineHeight: 1.25 }}>
+                                        <ViewUserModal populated_user={doc.populated_user} user_id={doc.user_id} />
+                                    </Box>
+                                </Box>
+                                <Typography component="h5" sx={{ fontSize: "1.25rem", m: 0 }}>{doc.score || doc.total}</Typography>
+                            </Box>
+                            {doc.last_play && doc.public_last_play && (
+                                <Typography component="small" sx={{ mt: "0.25rem", fontSize: "0.75rem" }}>
+                                    Played: {format(new Date(doc.last_play), "MM/d/yy hh:mmaa")}
+                                </Typography>
+                            )}
+                        </Box>
+                    ))}
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: "1rem", py: "0.5rem", borderTop: 1, borderColor: "divider" }}>
+                    <Typography sx={{ fontSize: "0.875em" }}>Play to get on the board!</Typography>
+                    <ArticlesButton small aria-label="Scoreboard settings" onClick={() => setShowSettings(true)}>
+                        <SettingsIcon fontSize="small" />
                     </ArticlesButton>
-
-                </div>
-
-                <div className="card-body p-0">
-
-                    {(scoreboard?.length || 0) == 0 &&
-                        <div className="small p-2">No scores yet</div>
-                    }
-
-                    {scoreboard?.map((doc, i) =>
-                        <div key={doc._id} className="result d-flex flex-column justify-content-between border-bottom p-2">
-
-                            <div className='d-flex justify-content-between lh-sm'>
-
-                                <div className='d-flex'>
-
-                                    <h5 className='mb-0 me-3'>{i + 1}</h5>
-
-                                    <div className='lh-sm'>
-
-                                        <ViewUserModal
-                                            populated_user={doc.populated_user}
-                                            user_id={doc.user_id}
-                                        />
-
-                                    </div>
-
-                                </div>
-
-                                <div><h5 className="mb-0">{doc.score || doc.total}</h5></div>
-
-                            </div>
-
-                            {(doc.last_play && doc.public_last_play) && <small className='mt-1' style={{ fontSize: '0.75rem' }}>Played: {format(new Date(doc.last_play), 'MM/d/yy hh:mmaa')}</small>}
-
-                        </div>
-                    )}
-
-                </div>
-
-                <div className="card-footer d-flex justify-content-between align-items-center">
-
-                    <div className='small'>Play to get on the board!</div>
-
-                    <ArticlesButton
-                        small
-                        onClick={() => {
-                            setShowSettings(true)
-                        }}
-                    >
-                        <i className="fad fa-cog me-0"></i>
-                    </ArticlesButton>
-
-                </div>
-
-            </div>
-
-        </div>
-    )
+                </Box>
+            </Card>
+        </Box>
+    );
 }
-
-export default Page;

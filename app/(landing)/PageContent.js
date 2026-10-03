@@ -1,475 +1,271 @@
-"use client"
-import { useEffect, useContext, useState, Suspense, use } from 'react';
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import dynamic from 'next/dynamic'
+import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import InfoIcon from "@mui/icons-material/Info";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import PaletteIcon from "@mui/icons-material/Palette";
+import ShuffleIcon from "@mui/icons-material/Shuffle";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import GroupsIcon from "@mui/icons-material/Groups";
+import { GamepadKeyboard, PieMenu } from "@articles-media/articles-gamepad-helper";
+import GameMenuPrimaryButtonGroup from "@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup";
+import SessionButton from "@articles-media/articles-dev-box/SessionButton";
+import useUserDetails from "@articles-media/articles-dev-box/useUserDetails";
+import useUserToken from "@articles-media/articles-dev-box/useUserToken";
+import ArticlesButton from "@/components/UI/Button";
+import PeerDetails from "@/components/UI/PeerDetails";
+import useUserGameScore from "@/hooks/User/useUserGameScore";
+import { usePeerStore } from "@/hooks/usePeerStore";
+import { useStore } from "@/hooks/useStore";
 
-// import { useSelector, useDispatch } from 'react-redux'
-
-// import ROUTES from 'components/constants/routes'
-
-import ArticlesButton from '@/components/UI/Button';
-// import SingleInput from '@/components/Articles/SingleInput';
-// import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
-// import IsDev from '@/components/IsDev';
-// import { ChromePicker } from 'react-color';
-// import { useSocketStore } from '@/hooks/useSocketStore';
-
-import useUserGameScore from '@/hooks/User/useUserGameScore';
-import { useSpleefGameStore } from '@/hooks/useSpleefGameStore';
-
-import GameScoreboard from '@articles-media/articles-dev-box/GameScoreboard';
-import Ad from '@articles-media/articles-dev-box/Ad';
-const ReturnToLauncherButton = dynamic(() =>
-    import('@articles-media/articles-dev-box/ReturnToLauncherButton'),
-    { ssr: false }
+const ReturnToLauncherButton = dynamic(
+    () => import("@articles-media/articles-dev-box/ReturnToLauncherButton"),
+    { ssr: false },
 );
-import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup';
-import SessionButton from '@articles-media/articles-dev-box/SessionButton';
-import { GamepadKeyboard, PieMenu } from '@articles-media/articles-gamepad-helper';
+const GameScoreboard = dynamic(
+    () => import("@articles-media/articles-dev-box/GameScoreboard"),
+    { ssr: false },
+);
+const Ad = dynamic(() => import("@articles-media/articles-dev-box/Ad"), { ssr: false });
 
-import useUserDetails from '@articles-media/articles-dev-box/useUserDetails';
-import useUserToken from '@articles-media/articles-dev-box/useUserToken';
-import PeerDetails from '@/components/UI/PeerDetails';
-import { usePeerStore } from '@/hooks/usePeerStore';
-import { useStore } from '@/hooks/useStore';
-
-const game_key = 'spleef'
-const game_name = 'Spleef'
+const sidePanelSx = {
+    mt: "1rem",
+    width: "100%",
+    maxWidth: 300,
+    "@media (min-width: 992px)": {
+        mt: 0,
+        display: "block",
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+    },
+};
 
 export default function GameLobbyPage() {
-
-    // const {
-    //     socket,
-    // } = useSocketStore(state => ({
-    //     socket: state.socket,
-    // }));
-
-    // const userReduxState = useSelector((state) => state.auth.user_details)
-    // const userReduxState = false
-
-    const _hasHydrated = useStore(state => state._hasHydrated)
-
-    const [joinGame, setJoinGame] = useState(false)
-    const [isMounted, setIsMounted] = useState(false)
-
-    const nickname = useStore(state => state.nickname)
-    const setNickname = useStore(state => state.setNickname)
-    const randomNickname = useStore(state => state.randomNickname)
-
-    const darkMode = useStore(state => state.darkMode);
-    const toggleDarkMode = useStore(state => state.toggleDarkMode);
-
-    const setShowInfoModal = useStore(state => state.setShowInfoModal)
-    const setShowSettingsModal = useStore(state => state.setShowSettingsModal)
-    const setShowCreditsModal = useStore(state => state.setShowCreditsModal)
-
-    const lobbyDetails = useStore(state => state.lobbyDetails)
-    // const setLobbyDetails = useStore(state => state.setLobbyDetails)
-
-    const resetPeerStore = usePeerStore(state => state.reset);
-
-    const {
-        data: userHighScore,
-        mutate: userHighScoreMutate
-    } = useUserGameScore({
-        game: 'Spleef'
-    });
+    const [joinGame, setJoinGame] = useState(false);
+    const hydrated = useStore((state) => state._hasHydrated);
+    const nickname = useStore((state) => state.nickname);
+    const setNickname = useStore((state) => state.setNickname);
+    const randomNickname = useStore((state) => state.randomNickname);
+    const nicknameKeyboard = useStore((state) => state.nicknameKeyboard);
+    const darkMode = useStore((state) => state.darkMode);
+    const lobbyDetails = useStore((state) => state.lobbyDetails);
+    const resetPeerStore = usePeerStore((state) => state.reset);
+    const { data: userHighScore } = useUserGameScore({ game: "Spleef" });
+    const { data: userToken } = useUserToken(process.env.NEXT_PUBLIC_GAME_PORT);
+    const { data: userDetails, isLoading: userDetailsLoading } = useUserDetails({ token: userToken });
 
     useEffect(() => {
         resetPeerStore();
-        setIsMounted(true)
-    }, [])
+    }, [resetPeerStore]);
 
-    const {
-        data: userToken,
-        error: userTokenError,
-        isLoading: userTokenLoading,
-        mutate: userTokenMutate
-    } = useUserToken(
-        process.env.NEXT_PUBLIC_GAME_PORT
-    );
-
-    const {
-        data: userDetails,
-        error: userDetailsError,
-        isLoading: userDetailsLoading,
-        mutate: userDetailsMutate
-    } = useUserDetails({
-        token: userToken
-    });
+    const pieOptions = [
+        { label: "Settings", Icon: SettingsIcon, callback: () => useStore.getState().setShowSettingsModal(true) },
+        { label: "Go Back", Icon: ArrowBackIcon, callback: () => window.history.back() },
+        { label: "Credits", Icon: InfoIcon, callback: () => useStore.getState().setShowCreditsModal(true) },
+        { label: "Game Launcher", Icon: SportsEsportsIcon, callback: () => { window.location.href = "https://games.articles.media"; } },
+        { label: `${darkMode ? "Light" : "Dark"} Mode`, Icon: PaletteIcon, callback: () => useStore.getState().toggleDarkMode() },
+    ];
 
     return (
-
-        <div className="spleef-landing-page">
-
+        <Box
+            sx={{
+                flexGrow: 1,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                position: "relative",
+                isolation: "isolate",
+                "& button:focus-visible, & input:focus-visible, & a:focus-visible": {
+                    outline: "3px solid #fff",
+                    outlineOffset: 2,
+                    boxShadow: "0 0 15px rgba(255,255,255,0.8)",
+                },
+            }}
+        >
             <Suspense>
-                {/* <GamepadKeyboard
-                    disableToggle={true}
-                    active={nicknameKeyboard}
-                    onFinish={(text) => {
-                        console.log("FINISH KEYBOARD", text)
-                        useStore.getState().setNickname(text);
-                        useStore.getState().setNicknameKeyboard(false);
-                    }}
-                    onCancel={(text) => {
-                        console.log("CANCEL KEYBOARD", text)
-                        // useStore.getState().setNickname(text);
-                        useStore.getState().setNicknameKeyboard(false);
-                    }}
-                /> */}
-                <PieMenu
-                    options={[
-                        {
-                            label: 'Settings',
-                            icon: 'fad fa-cog',
-                            callback: () => {
-                                setShowSettingsModal(prev => !prev)
-                            }
-                        },
-                        {
-                            label: 'Go Back',
-                            icon: 'fad fa-arrow-left',
-                            callback: () => {
-                                window.history.back()
-                            }
-                        },
-                        {
-                            label: 'Credits',
-                            icon: 'fad fa-info-circle',
-                            callback: () => {
-                                setShowCreditsModal(true)
-                            }
-                        },
-                        {
-                            label: 'Game Launcher',
-                            icon: 'fad fa-gamepad',
-                            callback: () => {
-                                window.location.href = 'https://games.articles.media';
-                            }
-                        },
-                        {
-                            label: `${darkMode ? "Light" : "Dark"} Mode`,
-                            icon: 'fad fa-palette',
-                            callback: () => {
-                                toggleDarkMode()
-                            }
-                        }
-                    ]}
-                    onFinish={(event) => {
-                        console.log("Event", event)
-                        if (event.callback) {
-                            event.callback()
-                        }
-                    }}
-                />
+                <Box data-hide-in-screenshot-mode="true">
+                    <GamepadKeyboard
+                        disableToggle
+                        active={nicknameKeyboard}
+                        onFinish={(text) => {
+                            setNickname(text);
+                            useStore.getState().setNicknameKeyboard(false);
+                        }}
+                        onCancel={() => useStore.getState().setNicknameKeyboard(false)}
+                    />
+                    <PieMenu
+                        options={pieOptions.map(({ label, Icon, callback }) => ({
+                            label: (
+                                <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                                    <Icon fontSize="small" />
+                                    {label}
+                                </Box>
+                            ),
+                            callback,
+                        }))}
+                        onFinish={(event) => event.callback?.()}
+                    />
+                </Box>
             </Suspense>
 
-            <div className='background-wrap'>
-                <img
-                    src={darkMode ? `img/background-dark.webp` : `img/background.webp`}
-                    alt="Game background"
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center',
-                        filter: 'blur(5px)'
-                    }}
+            <Box sx={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: -1 }}>
+                <Box
+                    component="img"
+                    src={darkMode ? "/img/background-dark.webp" : "/img/background.webp"}
+                    alt=""
+                    sx={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", filter: "blur(2px)" }}
                 />
-            </div>
+            </Box>
 
-            <div className="container d-flex flex-column-reverse flex-lg-row justify-content-center align-items-center">
+            <Box
+                sx={{
+                    width: "100%",
+                    px: "0.75rem",
+                    py: "1rem",
+                    display: "flex",
+                    flexDirection: "column-reverse",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    "@media (min-width: 992px)": { flexDirection: "row" },
+                }}
+            >
+                <Box sx={{ width: "20rem", maxWidth: "100%", flexShrink: 0 }}>
+                    {Boolean(userHighScore?.score) && (
+                        <Card sx={{ mb: "1rem", bgcolor: "game.card" }}>
+                            <CardContent sx={{ p: "1rem", "&:last-child": { pb: "1rem" } }}>
+                                <Typography sx={{ fontWeight: 700, mb: "0.25rem", fontSize: "0.875em", textAlign: "center" }}>
+                                    Your user high score: {userHighScore.score}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    )}
 
-                <div
-                    style={{ "width": "20rem" }}
-                >
+                    <Box sx={{ mb: "1rem" }}><PeerDetails /></Box>
 
-                    {
-                        userHighScore?.score
-                        &&
-                        <div className='card card-articles card-sm mb-3'>
-                            <div className='card-body'>
-                                <div className="fw-bold mb-1 small text-center">
-                                    Your user high score: {userHighScore?.score || 0}
-                                </div>
-                            </div>
-                        </div>
-                    }
+                    <Card sx={{ mb: "1rem", bgcolor: "game.card" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", p: "0.5rem 1rem", borderBottom: 1, borderColor: "divider" }}>
+                            <Box sx={{ mr: "10px", flexShrink: 0 }}>
+                                <Image src="/img/spleef-thumbnail-sm.jpg" width={75} height={75} alt="Spleef" />
+                            </Box>
+                            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Nickname"
+                                        value={hydrated ? nickname : ""}
+                                        disabled={!hydrated}
+                                        id="nickname"
+                                        name="nickname"
+                                        placeholder="Enter your nickname"
+                                        onChange={(event) => setNickname(event.target.value)}
+                                    />
+                                    <ArticlesButton small aria-label="Random nickname" onClick={randomNickname}>
+                                        <ShuffleIcon fontSize="small" />
+                                    </ArticlesButton>
+                                </Box>
+                                <Typography sx={{ mt: "0.25rem", fontSize: "0.8rem" }}>Visible to all players</Typography>
+                            </Box>
+                        </Box>
 
-                    <div className='mb-3'>
-                        <PeerDetails
-                        // kickPlayer={kickPlayer} 
-                        />
-                    </div>
-
-                    <div
-                        className="card card-articles card-sm mb-3"
-                    >
-
-                        {/* <div style={{ position: 'relative', height: '200px' }}>
-                            <Image
-                                src={Logo}
-                                alt=""
-                                fill
-                                style={{ objectFit: 'cover' }}
-                            />
-                        </div> */}
-
-                        <div className='card-header d-flex align-items-center'>
-
-                            <div
-                                style={{
-                                    marginRight: '10px',
-                                }}
-                            >
-                                <Image
-                                    src={`/img/spleef-thumbnail-sm.jpg`}
-                                    width={75}
-                                    height={75}
-                                    alt=""
-                                >
-
-                                </Image>
-                            </div>
-
-                            <div className="flex-grow-1">
-
-                                <div className="form-group articles mb-0">
-                                    <label htmlFor="nickname">Nickname</label>
-                                    <div className="d-flex align-items-center">
-                                        <input
-                                            type="text"
-                                            value={_hasHydrated ? nickname : ''}
-                                            disabled={!_hasHydrated}
-                                            id="nickname"
-                                            name="nickname"
-                                            placeholder="Enter your nickname"
-                                            onChange={(e) => {
-                                                setNickname(e.target.value)
-                                            }}
-                                            className={`form-control form-control-sm`}
-                                        />
-                                        <ArticlesButton
-                                            small
-                                            className=""
-                                            onClick={() => {
-                                                randomNickname()
-                                            }}
-                                        >
-                                            <i className="fad fa-random"></i>
-                                        </ArticlesButton>
-                                    </div>
-                                </div>
-
-                                <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
-
-                            </div>
-
-                        </div>
-
-                        <div className="card-body">
-
-                            {joinGame === false &&
+                        <CardContent sx={{ p: "1rem", "&:last-child": { pb: "1rem" } }}>
+                            {joinGame === false ? (
                                 <>
-                                    <Link
-                                        href={{
-                                            pathname: `/play`,
-                                        }}
-                                    >
-                                        <ArticlesButton className="w-100 mb-2">
-                                            <i className="fad fa-play"></i>
-                                            Start Game
-                                        </ArticlesButton>
-                                    </Link>
-
-                                    <ArticlesButton
-                                        className="w-100"
-                                        onClick={() => {
-                                            setJoinGame("")
-                                        }}
-                                    >
-                                        <i className="fad fa-users"></i>
+                                    <ArticlesButton component={Link} href="/play" sx={{ width: "100%", mb: "0.5rem" }} startIcon={<PlayArrowIcon />}>
+                                        Start Game
+                                    </ArticlesButton>
+                                    <ArticlesButton sx={{ width: "100%" }} onClick={() => setJoinGame("")} startIcon={<GroupsIcon />}>
                                         Join Game
                                     </ArticlesButton>
 
-                                    {/* Future Websockets or hybrid infra system */}
-                                    <div className='d-none'>
-                                        <div className="fw-bold mb-1 small text-center">
-                                            {lobbyDetails.players.length || 0} player{lobbyDetails.players.length > 1 && 's'} in the lobby.
-                                        </div>
-
-                                        <div className="servers">
-
-                                            {[1, 2, 3, 4].map(id => {
-
-                                                let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
-                                                    parseInt(lobby.server_id) == id
-                                                )
-
+                                    {/* Reserved for a future WebSocket or hybrid lobby. */}
+                                    <Box sx={{ display: "none" }}>
+                                        <Typography sx={{ fontWeight: 700, mb: "0.25rem", fontSize: "0.875em", textAlign: "center" }}>
+                                            {lobbyDetails?.players?.length || 0} player{lobbyDetails?.players?.length > 1 && "s"} in the lobby.
+                                        </Typography>
+                                        <Box sx={{ display: "grid", gap: "5px", gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+                                            {[1, 2, 3, 4].map((id) => {
+                                                const lobby = lobbyDetails?.fourFrogsGlobalState?.games?.find((item) => Number(item.server_id) === id);
                                                 return (
-                                                    <div key={id} className="server">
-
-                                                        <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
-                                                            <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
-                                                            <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
-                                                        </div>
-
-                                                        <div className='d-flex justify-content-around w-100 mb-1'>
-                                                            {[1, 2, 3, 4].map(player_count => {
-
-                                                                let playerLookup = false
-
-                                                                if (lobbyLookup?.players?.length >= player_count) playerLookup = true
-
-                                                                return (
-                                                                    <div key={player_count} className="icon" style={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        ...(playerLookup ? {
-                                                                            backgroundColor: 'black',
-                                                                        } : {
-                                                                            backgroundColor: 'gray',
-                                                                        }),
-                                                                        border: '1px solid black'
-                                                                    }}>
-
-                                                                    </div>
-                                                                )
-                                                            })}
-                                                        </div>
-
-                                                        <Link
-                                                            className={``}
-                                                            href={{
-                                                                pathname: `/play`,
-                                                                query: {
-                                                                    server: id
-                                                                }
-                                                            }}
-                                                        >
-                                                            <ArticlesButton
-                                                                className="px-5"
-                                                                small
-                                                            >
-                                                                Join
-                                                            </ArticlesButton>
-                                                        </Link>
-
-                                                    </div>
-                                                )
+                                                    <Box key={id} sx={{ p: "0.5rem", border: "1px solid rgba(0,0,0,0.25)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", mb: "0.5rem" }}>
+                                                            <Box sx={{ fontSize: "0.9rem", fontWeight: 700 }}>Server {id}</Box>
+                                                            <Box>{lobby?.players?.length || 0}/4</Box>
+                                                        </Box>
+                                                        <Box sx={{ display: "flex", justifyContent: "space-around", width: "100%", mb: "0.25rem" }}>
+                                                            {[1, 2, 3, 4].map((count) => (
+                                                                <Box key={count} sx={{ width: 20, height: 20, bgcolor: lobby?.players?.length >= count ? "black" : "gray", border: "1px solid black" }} />
+                                                            ))}
+                                                        </Box>
+                                                        <ArticlesButton component={Link} href={{ pathname: "/play", query: { server: id } }} sx={{ px: "3rem" }} small>
+                                                            Join
+                                                        </ArticlesButton>
+                                                    </Box>
+                                                );
                                             })}
-
-                                        </div>
-                                    </div>
+                                        </Box>
+                                    </Box>
                                 </>
-                            }
-
-                            {joinGame !== false &&
+                            ) : (
                                 <>
-                                    <div className="form-group articles mb-0">
-                                        <label htmlFor="nickname">Server ID</label>
-                                        {/* <SingleInput
-                                    value={nickname}
-                                    setValue={setNickname}
-                                /> */}
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="server-id"
-                                            value={joinGame}
-                                            autoFocus
-                                            autoComplete="off"
-                                            onChange={(e) => setJoinGame(e.target.value)}
-                                        ></input>
-                                    </div>
-                                    <div style={{ fontSize: '0.8rem' }}>Enter the 4 digit Server ID</div>
-
-                                    <div className='d-flex justify-content-center mt-3'>
-                                        <ArticlesButton
-                                            className=""
-                                            onClick={() => {
-                                                setJoinGame(false)
-                                            }}
-                                        >
-                                            <i className="fad fa-arrow-left"></i>
-                                            Go Back
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Server ID"
+                                        id="server-id"
+                                        value={joinGame}
+                                        autoFocus
+                                        autoComplete="off"
+                                        onChange={(event) => setJoinGame(event.target.value)}
+                                        helperText="Enter the 4 digit Server ID"
+                                    />
+                                    <Box sx={{ display: "flex", justifyContent: "center", mt: "1rem" }}>
+                                        <ArticlesButton onClick={() => setJoinGame(false)} startIcon={<ArrowBackIcon />}>Go Back</ArticlesButton>
+                                        <ArticlesButton component={Link} href={{ pathname: "/play", query: { server: joinGame } }} startIcon={<PlayArrowIcon />}>
+                                            Join Game
                                         </ArticlesButton>
-                                        <Link href={{
-                                            pathname: "/play",
-                                            query: {
-                                                server: joinGame
-                                            }
-                                        }}>
-                                            <ArticlesButton
-                                                className=""
-                                                onClick={() => {
-                                                    // setJoinGame("")
-                                                }}
-                                            >
-                                                <i className="fad fa-play"></i>
-                                                Join Game
-                                            </ArticlesButton>
-                                        </Link>
-                                    </div>
+                                    </Box>
                                 </>
-                            }
+                            )}
+                        </CardContent>
 
-                        </div>
+                        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", p: "0.5rem 1rem", borderTop: 1, borderColor: "divider" }}>
+                            <GameMenuPrimaryButtonGroup useStore={useStore} type="Landing" />
+                        </Box>
+                    </Card>
 
-                        <div className="card-footer d-flex flex-wrap justify-content-center">
-
-                            <GameMenuPrimaryButtonGroup 
-                                useStore={useStore}
-                                type="Landing"
-                            />
-
-                        </div>
-
-                    </div>
-
-                    <SessionButton
-                        port={process.env.NEXT_PUBLIC_GAME_PORT}
-                        friendsButton={true}
-                    />
-
+                    <SessionButton port={process.env.NEXT_PUBLIC_GAME_PORT} friendsButton />
                     <ReturnToLauncherButton />
+                </Box>
 
-                </div>
+                <Box sx={{ ...sidePanelSx, "@media (min-width: 992px)": { ...sidePanelSx["@media (min-width: 992px)"], left: "1rem" } }}>
+                    <GameScoreboard game={process.env.NEXT_PUBLIC_GAME_NAME} style="Default" darkMode={Boolean(darkMode)} />
+                </Box>
 
-                <GameScoreboard
-                    game={process.env.NEXT_PUBLIC_GAME_NAME}
-                    style="Default"
-                    darkMode={darkMode ? true : false}
-                    prepend={
-                        <>
-                            {/* <div
-                                style={{
-                                    width: '100%',
-                                    height: '200px',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <RotatingMascot />
-                            </div> */}
-                        </>
-                    }
-                />
-
-                <Ad
-                    style="Default"
-                    section={"Games"}
-                    section_id={process.env.NEXT_PUBLIC_GAME_NAME}
-                    darkMode={darkMode ? true : false}
-                    user_ad_token={userToken}
-                    userDetails={userDetails}
-                    userDetailsLoading={userDetailsLoading}
-                />
-
-            </div>
-        </div>
+                <Box sx={{ ...sidePanelSx, "@media (min-width: 992px)": { ...sidePanelSx["@media (min-width: 992px)"], right: "1rem" } }}>
+                    <Ad
+                        style="Default"
+                        section="Games"
+                        section_id={process.env.NEXT_PUBLIC_GAME_NAME}
+                        darkMode={Boolean(darkMode)}
+                        user_ad_token={userToken}
+                        userDetails={userDetails}
+                        userDetailsLoading={userDetailsLoading}
+                    />
+                </Box>
+            </Box>
+        </Box>
     );
 }

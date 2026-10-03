@@ -1,201 +1,85 @@
-import Link from "next/link";
+"use client";
 
-// import ROUTES from '@/components/constants/routes';
-// import { useGameStore } from "../hooks/useGameStore";
-import ArticlesButton from "@/components/UI/Button";
-
-// import ControllerPreview from "../../ControllerPreview";
-
-// import { useSocketStore } from "@/hooks/useSocketStore";
-import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
-// import { useHotkeys } from "react-hotkeys-hook";
-// import { useEffect, useRef } from "react";
-import { Dropdown, DropdownButton } from "react-bootstrap";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import ReplayIcon from "@mui/icons-material/Replay";
+import BugReportIcon from "@mui/icons-material/BugReport";
+import GameMenuPrimaryButtonGroup from "@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup";
+import ArticlesButton from "./Button";
 import PeerDetails from "./PeerDetails";
+import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
 import { useStore } from "@/hooks/useStore";
 
-import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
-import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup';
-
-export default function MenuPanelContent(props) {
-
-    const reloadScene = useStore(state => state.reloadScene)
-    const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
-
-    // const {
-    //     socket,
-    // } = useSocketStore(state => ({
-    //     socket: state.socket,
-    // }));
-
-    const darkMode = useStore(state => state.darkMode);
-    const toggleDarkMode = useStore(state => state.toggleDarkMode);
-    const debug = useStore(state => state.debug);
-    const setDebug = useStore(state => state.setDebug);
-    const sidebar = useStore(state => state.sidebar);
-
-    const survivalTimer = useSpleefGameStore(state => state.survivalTimer);
-    const alive = useSpleefGameStore(state => state.alive);
-    const bestSurvivalTimer = useSpleefGameStore(state => state.bestSurvivalTimer);
-    const teleportToPosition = useSpleefGameStore(state => state.teleportToPosition);
+export default function MenuPanelContent() {
+    const [debugAnchor, setDebugAnchor] = useState(null);
+    const reloadScene = useStore((state) => state.reloadScene);
+    const debug = useStore((state) => state.debug);
+    const setDebug = useStore((state) => state.setDebug);
+    const survivalTimer = useSpleefGameStore((state) => state.survivalTimer);
+    const alive = useSpleefGameStore((state) => state.alive);
+    const bestSurvivalTimer = useSpleefGameStore((state) => state.bestSurvivalTimer);
+    const teleportToPosition = useSpleefGameStore((state) => state.teleportToPosition);
 
     return (
-        <div className='w-100'>
-
-            <div className="card card-articles card-sm">
-
-                <div className="card-body d-flex flex-wrap">
-
-                    <GameMenuPrimaryButtonGroup 
-                        useStore={useStore}
-                        type="GameMenu"
-                    />
-
-                </div>
-            </div>
-
-            <PeerDetails 
-                // kickPlayer={kickPlayer} 
-            />
-
-            {/* Touch Controls */}
-            {/* <div
-                className="card card-articles card-sm"
-            >
-                <div className="card-body">
-
-                    <div className="small text-muted">Touch Controls</div>
-
-                    <div className='d-flex flex-column'>
-
-                        <div>
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                active={!touchControlsEnabled}
-                                onClick={() => {
-                                    setTouchControlsEnabled(false)
-                                }}
-                            >
-                                <i className="fad fa-redo"></i>
-                                Off
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                active={touchControlsEnabled}
-                                onClick={() => {
-                                    setTouchControlsEnabled(true)
-                                }}
-                            >
-                                <i className="fad fa-redo"></i>
-                                On
-                            </ArticlesButton>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div> */}
-
-            {/* Debug Controls */}
-            <div
-                className="card card-articles card-sm"
-            >
-                <div className="card-body">
-
-                    <div className="small text-muted">Debug Controls</div>
-
-                    <div className="small border p-2">
-                        {/* <div>Rotation Angle: {cueRotation}</div>
-                        <div>Power: {cuePower}/100</div> */}
-                        <div>Best Time: {bestSurvivalTimer}</div>
-                        <div>Timer: {survivalTimer}</div>
-                        <div>Alive: {alive ? 'True' : 'False'}</div>
-                    </div>
-
-                    <div className='d-flex flex-column'>
-
-                        <div className="d-flex flex-wrap">
-
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                onClick={() => {
-                                    reloadScene()
-                                }}
-                            >
-                                <i className="fad fa-redo"></i>
-                                Reload Game
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                onClick={reloadScene}
-                            >
-                                <i className="fad fa-redo"></i>
-                                Reset Camera
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                onClick={() => teleportToPosition(7, 30, 7)}
-                            >
-                                <i className="fad fa-redo"></i>
-                                Reset Player
-                            </ArticlesButton>
-
-                            <div className='w-50'>
-                            <DropdownButton
-                                variant="articles w-100"
-                                size='sm'
-                                id="dropdown-basic-button"
-                                className="dropdown-articles"
-                                title={
-                                    <span>
-                                        <i className="fad fa-bug"></i>
-                                        <span>Debug </span>
-                                        <span>{debug ? 'On' : 'Off'}</span>
-                                    </span>
-                                }
-                            >
-
-                                <div style={{ maxHeight: '600px', overflowY: 'auto', width: '200px' }}>
-
-                                    {[
-                                        false,
-                                        true
-                                    ]
-                                        .map(location =>
-                                            <Dropdown.Item
-                                                key={location}
-                                                onClick={() => {
-                                                    setDebug(location)
-                                                }}
-                                                className="d-flex justify-content-between"
-                                            >
-                                                {location ? 'True' : 'False'}
-                                            </Dropdown.Item>
-                                        )}
-
-                                </div>
-
-                            </DropdownButton>
-                        </div>
-
-                        </div>
-
-                        
-
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    )
-
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Card sx={{ bgcolor: "game.card" }}>
+                <CardContent sx={{ display: "flex", flexWrap: "wrap", p: "1rem", "&:last-child": { pb: "1rem" } }}>
+                    <GameMenuPrimaryButtonGroup useStore={useStore} type="GameMenu" />
+                </CardContent>
+            </Card>
+            <PeerDetails />
+            <Card sx={{ bgcolor: "game.card" }}>
+                <CardContent sx={{ p: "1rem", "&:last-child": { pb: "1rem" } }}>
+                    <Typography sx={{ fontSize: "0.875em", color: "text.secondary" }}>Debug Controls</Typography>
+                    <Box sx={{ fontSize: "0.875em", border: 1, borderColor: "divider", p: "0.5rem" }}>
+                        <Box>Best Time: {bestSurvivalTimer}</Box>
+                        <Box>Timer: {survivalTimer}</Box>
+                        <Box>Alive: {alive ? "True" : "False"}</Box>
+                    </Box>
+                    <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                        <ArticlesButton small sx={{ width: "50%" }} onClick={reloadScene} startIcon={<ReplayIcon />}>Reload Game</ArticlesButton>
+                        <ArticlesButton small sx={{ width: "50%" }} onClick={reloadScene} startIcon={<ReplayIcon />}>Reset Camera</ArticlesButton>
+                        <ArticlesButton small sx={{ width: "50%" }} onClick={() => teleportToPosition(7, 30, 7)} startIcon={<ReplayIcon />}>Reset Player</ArticlesButton>
+                        <ArticlesButton
+                            small
+                            sx={{ width: "50%" }}
+                            id="debug-menu-button"
+                            aria-haspopup="menu"
+                            aria-controls={debugAnchor ? "debug-menu" : undefined}
+                            aria-expanded={Boolean(debugAnchor)}
+                            onClick={(event) => setDebugAnchor(event.currentTarget)}
+                            startIcon={<BugReportIcon />}
+                        >
+                            Debug {debug ? "On" : "Off"}
+                        </ArticlesButton>
+                        <Menu
+                            id="debug-menu"
+                            anchorEl={debugAnchor}
+                            open={Boolean(debugAnchor)}
+                            onClose={() => setDebugAnchor(null)}
+                            slotProps={{ list: { "aria-labelledby": "debug-menu-button", sx: { maxHeight: 600, width: 200 } } }}
+                        >
+                            {[false, true].map((value) => (
+                                <MenuItem
+                                    key={String(value)}
+                                    selected={debug === value}
+                                    onClick={() => {
+                                        setDebug(value);
+                                        setDebugAnchor(null);
+                                    }}
+                                >
+                                    {value ? "True" : "False"}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
+    );
 }

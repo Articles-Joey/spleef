@@ -1,146 +1,59 @@
+"use client";
+
 import { useState } from "react";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import TextField from "@mui/material/TextField";
+import ArticlesModal from "./ArticlesModal";
+import ArticlesButton from "./Button";
 
-import { Modal } from "react-bootstrap"
-
-// import powerups from "app/(site)/community/games/four-frogs/components/powerups";
-
-import ArticlesSwitch from "@/components/UI/ArticlesSwitch";
-import ArticlesButton from "@/components/UI/Button";
-
-export default function FourFrogsPrivateGameModal({
-    show,
-    setShow,
-}) {
-
-    const [showModal, setShowModal] = useState(true)
-
-    const [action, setAction] = useState('')
-
-    const [room, setRoom] = useState('')
-
-    const [powerupSettings, setPowerupSettings] = useState([...powerups.map(obj => ({
-        ...obj,
-        enabled: true
-    }))])
+export default function PrivateGameModal({ show = true, setShow }) {
+    const [action, setAction] = useState("");
+    const [room, setRoom] = useState("");
 
     return (
-        <>
-
-            <Modal
-                className="articles-modal"
-                size='md'
-                show={showModal}
-                centered
-                scrollable
-                onExited={() => {
-
-                    console.log("onExited")
-                    setShow(false)
-                    // setTimeout(() => setShow(false), 200);
-
-                }}
-                onHide={() => {
-
-                    console.log("onHide")
-                    setShowModal(false)
-
-                    // if (!lightboxData) {
-                    //     setShow(false)
-                    // } else {
-                    //     console.log("Should not close yet")
-                    // }
-
-                }}
-            >
-
-
-
-                <Modal.Header closeButton>
-                    <Modal.Title>Private Game Settings</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body className="">
-
-                    <div>
-
-                        <ArticlesButton
-                            className={`w-50 ${action == 'Join' && 'active'}`}
-                            onClick={() => {
-                                setAction("Join")
-                            }}
-                        >
-                            Join Private Game
-                        </ArticlesButton>
-
-                        <ArticlesButton
-                            className={`w-50 ${action == 'Start' && 'active'}`}
-                            onClick={() => {
-                                setAction("Start")
-                            }}
-                        >
-                            Start Private Game
-                        </ArticlesButton>
-
-                    </div>
-
-                    {action &&
-                        <div className="mt-2">
-                            <hr />
-                            <div>
-                                {action} Options
-                            </div>
-                            <div className="form-group articles">
-                                <label htmlFor="room-code">Room Code</label>
-                                <input
-                                    id="room-code"
-                                    className="form-control"
-                                    value={room}
-                                    onChange={e => setRoom(e.target.value)}
-                                >
-
-                                </input>
-                            </div>
-                            <div className="small">At least 3 characters. Only letters, numbers, underscores (_), and dashes (-) can be used</div>
-                        </div>
-                    }
-
-                    {action == 'Start' &&
-                        <div className="mt-2">
-
-
-
-                        </div>
-                    }
-
-                </Modal.Body>
-
-                <Modal.Footer className="justify-content-between">
-
-                    {/* <div></div> */}
-
-                    <ArticlesButton
-                        variant="outline-dark"
-                        onClick={() => {
-                            setShowModal(false)
-                        }}
-                    >
+        <ArticlesModal
+            show={show}
+            setShow={setShow}
+            title="Private Game Settings"
+            footerOverride={(setOpen) => (
+                <>
+                    <ArticlesButton variant="outline-dark" onClick={() => setOpen(false)}>
                         Close
                     </ArticlesButton>
-
-                    <ArticlesButton
-                        variant="success"
-                        onClick={() => {
-
-                        }}
-                        disabled={(room.length || 0) < 3}
-                    >
+                    <ArticlesButton variant="success" disabled={room.length < 3}>
                         Join
                     </ArticlesButton>
-
-                </Modal.Footer>
-
-            </Modal>
-        </>
-    )
-
+                </>
+            )}
+        >
+            <Box sx={{ display: "flex" }}>
+                {["Join", "Start"].map((option) => (
+                    <ArticlesButton
+                        key={option}
+                        sx={{ width: "50%" }}
+                        active={action === option}
+                        onClick={() => setAction(option)}
+                    >
+                        {option} Private Game
+                    </ArticlesButton>
+                ))}
+            </Box>
+            {action && (
+                <Box sx={{ mt: "0.5rem" }}>
+                    <Divider sx={{ my: "1rem" }} />
+                    <Box sx={{ mb: "0.5rem" }}>{action} Options</Box>
+                    <TextField
+                        fullWidth
+                        size="small"
+                        id="room-code"
+                        label="Room Code"
+                        value={room}
+                        onChange={(event) => setRoom(event.target.value)}
+                        helperText="At least 3 characters. Only letters, numbers, underscores (_), and dashes (-) can be used."
+                    />
+                </Box>
+            )}
+        </ArticlesModal>
+    );
 }

@@ -1,89 +1,76 @@
-import { usePeerStore } from '@/hooks/usePeerStore';
-import ArticlesButton from './Button';
+"use client";
+
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Typography from "@mui/material/Typography";
+import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import BlockIcon from "@mui/icons-material/Block";
+import { usePeerStore } from "@/hooks/usePeerStore";
+import ArticlesButton from "./Button";
 
 export default function PeerDetails({ kickPlayer }) {
+    const peer = usePeerStore((state) => state.peer);
+    const isHost = usePeerStore((state) => state.isHost);
+    const displayId = usePeerStore((state) => state.displayId);
+    const gameState = usePeerStore((state) => state.gameState);
 
-    const peer = usePeerStore(state => state.peer)
-    const isHost = usePeerStore(state => state.isHost)
-    const displayId = usePeerStore(state => state.displayId)
-    const gameState = usePeerStore(state => state.gameState)
-
-    if (!peer) return null;
-
-    if (!displayId) return null;
+    if (!peer || !displayId) return null;
 
     return (
-        <div className="card card-articles card-sm">
-            <div className="card-body">
-
-                <div className="small text-muted">
-                    Multiplayer Peer Info
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center border p-1">
-
-                    <div>
-
+        <Card sx={{ bgcolor: "game.card" }}>
+            <CardContent sx={{ p: "1rem", "&:last-child": { pb: "1rem" } }}>
+                <Typography sx={{ fontSize: "0.875em", color: "text.secondary" }}>Multiplayer Peer Info</Typography>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: 1, borderColor: "divider", p: "0.25rem" }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                         <ArticlesButton
-                            className={`me-2`}
-                            onClick={() => {
-                                navigator.clipboard.writeText(
-                                    window.location.origin + "/play?server=" + displayId
-                                )
-                            }}
+                            sx={{ mr: "0.5rem" }}
+                            aria-label="Copy invite link"
+                            onClick={() => navigator.clipboard.writeText(window.location.origin + "/play?server=" + displayId)}
                         >
-                            <i className="fad fa-clipboard me-0"></i>
+                            <ContentPasteIcon fontSize="small" />
                         </ArticlesButton>
-
-                        <span>ID: <span className="fw-bold h5 mb-0 text-primary">{displayId}</span></span>
-
-                    </div>
-
-                    {isHost && <span className="badge bg-success">HOST</span>}
-
-                </div>
-
-                <div
-                    className="text-muted mt-1"
-                    style={{
-                        fontSize: "0.8rem"
-                    }}
-                >
+                        <Box component="span">
+                            ID: <Box component="span" sx={{ fontWeight: 700, fontSize: "1.25rem", color: "primary.main" }}>{displayId}</Box>
+                        </Box>
+                    </Box>
+                    {isHost && <Chip label="HOST" color="success" size="small" />}
+                </Box>
+                <Typography sx={{ color: "text.secondary", mt: "0.25rem", fontSize: "0.8rem" }}>
                     Share this ID with friends to play together! Clipboard button copies the invite link.
-                </div>
-
-                <div className="border mt-3">
-                    <div className="border small text-muted mb-1">Players ({gameState?.players?.length || 0})</div>
-                    <div className="list-group list-group-flush small">
-                        {gameState?.players?.map(player => (
-                            <div key={player.id} className="list-group-item px-0 py-1 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span className={player.id === peer.id ? "fw-bold" : ""}>
+                </Typography>
+                <Box sx={{ border: 1, borderColor: "divider", mt: "1rem" }}>
+                    <Typography sx={{ borderBottom: 1, borderColor: "divider", fontSize: "0.875em", color: "text.secondary", mb: "0.25rem" }}>
+                        Players ({gameState?.players?.length || 0})
+                    </Typography>
+                    <List disablePadding sx={{ fontSize: "0.875em" }}>
+                        {gameState?.players?.map((player) => (
+                            <ListItem key={player.id} sx={{ px: 0, py: "0.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: 1, borderColor: "divider" }}>
+                                <Box>
+                                    <Box component="span" sx={{ fontWeight: player.id === peer.id ? 700 : 400 }}>
                                         {player.nickname || player.id} {player.id === peer.id ? "(You)" : ""}
-                                    </span>
-                                    <span className="badge bg-primary ms-2" style={{ fontSize: '0.7em' }}>Player</span>
-                                </div>
-                                
-                                <div className="d-flex align-items-center">
-                                    <span className="text-muted font-monospace me-2">
-                                        {player.position?.map(c => Math.round(c)).join(', ')}
-                                    </span>
+                                    </Box>
+                                    <Chip label="Player" size="small" color="primary" sx={{ ml: "0.5rem", fontSize: "0.7em", height: 20 }} />
+                                </Box>
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <Box component="span" sx={{ color: "text.secondary", fontFamily: "monospace", mr: "0.5rem" }}>
+                                        {player.position?.map((coordinate) => Math.round(coordinate)).join(", ")}
+                                    </Box>
                                     {isHost && player.id !== peer.id && (
-                                        <button 
-                                            className="btn btn-outline-danger btn-sm py-0 px-1 lh-1" 
-                                            style={{ fontSize: '0.7rem' }}
-                                            onClick={() => kickPlayer && kickPlayer(player.id)}
-                                            title="Kick Player"
-                                        >
-                                            <i className="fad fa-ban"></i>
-                                        </button>
+                                        <IconButton size="small" color="error" aria-label="Kick player" title="Kick Player" onClick={() => kickPlayer?.(player.id)}>
+                                            <BlockIcon fontSize="small" />
+                                        </IconButton>
                                     )}
-                                </div>
-                            </div>
+                                </Box>
+                            </ListItem>
                         ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+                    </List>
+                </Box>
+            </CardContent>
+        </Card>
+    );
 }

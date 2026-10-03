@@ -1,62 +1,30 @@
-// import { Geist, Geist_Mono } from "next/font/google";
-
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import theme from '@/theme';
-
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import "@/styles/index.scss";
-
-import "@articles-media/articles-dev-box/dist/style.css";
+import { Suspense } from "react";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import AppThemeProvider from "@/components/AppThemeProvider";
+import LayoutClient from "./layout-client";
+import PeerManager from "@/components/PeerManager";
 
 import "@articles-media/articles-gamepad-helper/dist/articles-gamepad-helper.css";
 
-import LayoutClient from './layout-client';
-import GlobalClientModals from '@/components/UI/GlobalClientModals';
-import { Suspense } from 'react';
-import PeerManager from '@/components/PeerManager';
-
 export const metadata = {
-  title: "Spleef",
-  description: "Try to knock each other off a platform by breaking the blocks beneath their feet.",
+    title: "Spleef",
+    description: "Try to knock each other off a platform by breaking the blocks beneath their feet.",
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-
-      <head>
-
-        <link
-          rel="stylesheet"
-          href={`${process.env.NEXT_PUBLIC_CDN}fonts/fontawsome/css/all.min.css`}
-        />
-
-      </head>
-
-      <body
-      // className={`${geistSans.variable} ${geistMono.variable}`}
-      >
-
-        {/* <SocketLogicHandler /> */} 
-        <LayoutClient />
-
-        <Suspense>         
-          <GlobalClientModals />
-          <PeerManager />
-        </Suspense>
-
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
-
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body>
+                <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                    <AppThemeProvider>
+                        <LayoutClient />
+                        <Suspense>
+                            <PeerManager />
+                        </Suspense>
+                        {children}
+                    </AppThemeProvider>
+                </AppRouterCacheProvider>
+            </body>
+        </html>
+    );
 }

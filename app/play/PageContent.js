@@ -1,9 +1,8 @@
 "use client"
-import ArticlesButton from "@/components/UI/Button";
+import Box from "@mui/material/Box";
 import MenuPanelContent from "@/components/UI/MenuPanelContent";
 import GameCanvas from "@/components/Game/GameCanvas";
-import { useEffect, useState } from "react";
-import { useLocalStorageNew } from "@/hooks/useLocalStorageNew";
+import { useEffect } from "react";
 import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 import { useSearchParams } from "next/navigation";
 import { useSpleefGameStore } from "@/hooks/useSpleefGameStore";
@@ -30,7 +29,7 @@ export default function GamePage() {
     const sceneKey = useStore(state => state.sceneKey);
     const setSceneKey = useStore(state => state.setSceneKey);
     const sidebar = useStore(state => state.sidebar);
-    const menuOpen = useStore(state => state.menuOpen);
+    const menuOpen = useStore(state => state.showMenu);
 
     // const [reloadableKey, setReloadableKey] = useState(0)
 
@@ -99,16 +98,17 @@ export default function GamePage() {
 
     return (
 
-        <div
+        <Box
             className={classNames(
                 `${process.env.NEXT_PUBLIC_GAME_KEY}-game-page`,
                 {
                     'menu-open': menuOpen,
-                    'fullscreen': useFullscreen().isFullscreen,
+                    'fullscreen': isFullscreen,
                     'show-sidebar': sidebar,
                 }
             )}
             id={`${process.env.NEXT_PUBLIC_GAME_KEY}-game-page`}
+            sx={{ position: "relative", display: "flex" }}
         >
 
             <GameMenu
@@ -123,15 +123,29 @@ export default function GamePage() {
                 }}
             />
 
-            <div className='canvas-wrap'>
+            <Box
+                className="canvas-wrap"
+                sx={{
+                    position: "relative",
+                    width: "100vw",
+                    height: "100vh",
+                    "& canvas": {
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                        left: 0,
+                        top: 0,
+                    },
+                }}
+            >
 
                 <GameCanvas
                     key={sceneKey}
                 />
 
-            </div>
+            </Box>
 
-        </div>
+        </Box>
     );
 
 }
